@@ -1,0 +1,74 @@
+.clock {
+  padding-top: 10px;
+}
+
+.clock__row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.clock__time {
+  font-size: var(--clock);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  line-height: 0.86;
+  letter-spacing: -0.045em;
+  white-space: nowrap;
+}
+
+.clock__side {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding-top: 12px;
+  color: var(--faint);
+  font-family: var(--mono);
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+}
+
+.clock__date-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 18px;
+  margin-top: 16px;
+}
+
+.clock__date {
+  color: var(--dim);
+  font-size: 17px;
+  letter-spacing: -0.01em;
+}
+
+.clock__weather {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.clock__divider {
+  width: 1px;
+  height: 15px;
+  background: var(--line);
+}
+
+.weather {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--dim);
+  font-size: 17px;
+}
+
+.weather__glyph {
+  font-size: 15px;
+}
+
+@media (width <= 720px) {
+  /* The weather wraps onto its own line here, so the separator would be stray. */
+  .clock__divider {
+    display: none;
+  }
+}

@@ -1,10 +1,3 @@
-/**
- * Copies the built page to a stable path outside the project, so a browser can
- * be pointed at one URL that survives every rebuild — set it as your homepage
- * once, then `pnpm build && pnpm deploy:local` to update it in place.
- *
- * Pass a destination to override the default: `pnpm deploy:local ~/startpage.html`
- */
 import { copyFile, mkdir, stat } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";

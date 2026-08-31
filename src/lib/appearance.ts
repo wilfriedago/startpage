@@ -1,22 +1,18 @@
 import { save } from "./storage";
 import type { Appearance, ThemeChoice } from "./types";
 
-const DEFAULT_FONT_STACK = "'Instrument Sans',Helvetica,system-ui,sans-serif";
-const DEFAULT_MONO_STACK = "'JetBrains Mono',ui-monospace,monospace";
+const DEFAULT_FONT = "IBM Plex Sans";
+const DEFAULT_MONO = "IBM Plex Mono";
+const DEFAULT_FONT_STACK = "'IBM Plex Sans',system-ui,sans-serif";
+const DEFAULT_MONO_STACK = "'IBM Plex Mono',ui-monospace,monospace";
 
 export const FONTS: Record<string, string> = {
-  "Instrument Sans": DEFAULT_FONT_STACK,
-  Helvetica: "Helvetica,'Helvetica Neue',Arial,sans-serif",
-  "Space Grotesk": "'Space Grotesk',Helvetica,sans-serif",
-  "IBM Plex Sans": "'IBM Plex Sans',Helvetica,sans-serif",
-  "DM Sans": "'DM Sans',Helvetica,sans-serif",
+  "IBM Plex Sans": DEFAULT_FONT_STACK,
   "System UI": "system-ui,-apple-system,sans-serif",
 };
 
 export const MONOS: Record<string, string> = {
-  "JetBrains Mono": DEFAULT_MONO_STACK,
-  "IBM Plex Mono": "'IBM Plex Mono',ui-monospace,monospace",
-  "Space Mono": "'Space Mono',ui-monospace,monospace",
+  "IBM Plex Mono": DEFAULT_MONO_STACK,
   "System Mono": "ui-monospace,SFMono-Regular,Menlo,monospace",
 };
 
@@ -25,11 +21,22 @@ export const DEFAULT_APPEARANCE: Appearance = {
   bg: null,
   blur: true,
   clockScale: 1,
-  font: "Instrument Sans",
-  mono: "JetBrains Mono",
+  font: DEFAULT_FONT,
+  mono: DEFAULT_MONO,
   radius: 10,
   scrim: 45,
 };
+
+/** Migrates saved settings that refer to font families no longer bundled. */
+export function normalizeAppearance(value: Appearance): Appearance {
+  const candidate = value && typeof value === "object" ? value : DEFAULT_APPEARANCE;
+  return {
+    ...DEFAULT_APPEARANCE,
+    ...candidate,
+    font: Object.hasOwn(FONTS, candidate.font) ? candidate.font : DEFAULT_FONT,
+    mono: Object.hasOwn(MONOS, candidate.mono) ? candidate.mono : DEFAULT_MONO,
+  };
+}
 
 export const BG_SWATCHES = [
   "#0E1123",

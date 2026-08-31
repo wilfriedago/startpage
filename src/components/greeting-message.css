@@ -1,0 +1,18 @@
+.greeting {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.greeting__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.greeting__text {
+  color: var(--dim);
+  font-size: 14px;
+  letter-spacing: -0.01em;
+}

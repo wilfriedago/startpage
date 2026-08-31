@@ -1,0 +1,31 @@
+.dock {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  z-index: 30;
+  display: flex;
+  gap: 8px;
+}
+
+.dock__button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  color: var(--dim);
+  background: var(--bg1);
+  border: 1px solid var(--line);
+  border-radius: calc(var(--radius) - 2px);
+  cursor: pointer;
+}
+
+.dock__button:hover {
+  color: var(--fg);
+  border-color: var(--accent);
+}
+
+.dock__button--on {
+  color: var(--accent);
+}

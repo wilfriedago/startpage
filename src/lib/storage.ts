@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState } from "preact/hooks";
 
 const PREFIX = "helium-start:";
 
@@ -26,18 +26,23 @@ export function save<T>(key: string, value: T): void {
 export function usePersistent<T>(
   key: string,
   fallback: T,
+  normalize?: (value: T) => T,
 ): [T, (next: T | ((current: T) => T)) => void] {
-  const [value, setValue] = useState<T>(() => load(key, fallback));
+  const [value, setValue] = useState<T>(() => {
+    const loaded = load(key, fallback);
+    return normalize ? normalize(loaded) : loaded;
+  });
 
   const update = useCallback(
     (next: T | ((current: T) => T)) => {
       setValue((current) => {
-        const resolved = typeof next === "function" ? (next as (c: T) => T)(current) : next;
+        const candidate = typeof next === "function" ? (next as (c: T) => T)(current) : next;
+        const resolved = normalize ? normalize(candidate) : candidate;
         save(key, resolved);
         return resolved;
       });
     },
-    [key],
+    [key, normalize],
   );
 
   return [value, update];

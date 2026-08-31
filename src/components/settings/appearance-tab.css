@@ -1,0 +1,27 @@
+.swatches {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 7px;
+}
+
+.swatch {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: calc(var(--radius) - 4px);
+  cursor: pointer;
+}
+
+.swatch--round {
+  border-radius: 50%;
+}
+
+.swatch--on {
+  box-shadow: 0 0 0 2px var(--bg1), 0 0 0 3.5px var(--accent);
+}
+
+.swatch--on-fg {
+  box-shadow: 0 0 0 2px var(--bg1), 0 0 0 3.5px var(--fg);
+}

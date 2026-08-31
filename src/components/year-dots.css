@@ -1,0 +1,33 @@
+.year__head {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+}
+
+.year__grid {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-rows: repeat(7, auto);
+  grid-template-columns: repeat(var(--year-columns), minmax(0, 1fr));
+  gap: clamp(2px, 0.32vw, 5px);
+  width: 100%;
+}
+
+.year__cell {
+  width: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: 25%;
+  aspect-ratio: 1;
+  cursor: pointer;
+}
+
+.year__cell:focus-visible {
+  outline-offset: 3px;
+}
+
+.year__cell--pad,
+.year__cell--month-gap {
+  background: transparent;
+  pointer-events: none;
+}

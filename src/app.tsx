@@ -1,19 +1,21 @@
-import { useEffect } from "react";
+import "./app.css";
 
-import { Agenda } from "./components/Agenda";
-import { ClockBlock } from "./components/ClockBlock";
-import { DayModal } from "./components/DayModal";
-import { Dock } from "./components/Dock";
-import { Greeting } from "./components/Greeting";
-import { VideoHost } from "./components/VideoHost";
-import { Note } from "./components/Note";
-import { Player } from "./components/Player";
-import { Shortcuts } from "./components/Shortcuts";
-import { Tasks } from "./components/Tasks";
-import { Tooltip } from "./components/Tooltip";
-import { WorldClocks } from "./components/WorldClocks";
-import { YearDots } from "./components/YearDots";
-import { SettingsModal } from "./components/settings/SettingsModal";
+import { useEffect } from "preact/hooks";
+
+import { Agenda } from "./components/agenda-panel";
+import { ClockBlock } from "./components/clock-block";
+import { DayModal } from "./components/day-modal";
+import { Dock } from "./components/app-dock";
+import { Greeting } from "./components/greeting-message";
+import { VideoHost } from "./components/video-host";
+import { Note } from "./components/note-panel";
+import { Player } from "./components/media-player";
+import { Shortcuts } from "./components/shortcut-list";
+import { Tasks } from "./components/task-list";
+import { Tooltip } from "./components/day-tooltip";
+import { WorldClocks } from "./components/world-clocks";
+import { YearDots } from "./components/year-dots";
+import { SettingsModal } from "./components/settings/settings-modal";
 import { youtubeId } from "./lib/media";
 import { useStore } from "./store";
 

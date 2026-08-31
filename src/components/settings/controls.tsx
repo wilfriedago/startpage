@@ -1,4 +1,4 @@
-import type { ChangeEvent, ReactNode } from "react";
+import type { ComponentChildren, TargetedEvent } from "preact";
 
 export function Pill({
   grow,
@@ -51,7 +51,9 @@ export function Check({
     <label className={boxed ? "check check--boxed" : "check"}>
       <input
         checked={checked}
-        onChange={(event: ChangeEvent<HTMLInputElement>) => onChange(event.target.checked)}
+        onChange={(event: TargetedEvent<HTMLInputElement>) =>
+          onChange(event.currentTarget.checked)
+        }
         type="checkbox"
       />
       <span>{label}</span>
@@ -83,7 +85,7 @@ export function SliderRow({
         aria-label={label}
         max={max}
         min={min}
-        onChange={(event) => onChange(Number(event.target.value))}
+        onInput={(event) => onChange(Number(event.currentTarget.value))}
         step={step}
         type="range"
         value={value}
@@ -93,7 +95,7 @@ export function SliderRow({
   );
 }
 
-export function Group({ children, label }: { children: ReactNode; label: string }) {
+export function Group({ children, label }: { children: ComponentChildren; label: string }) {
   return (
     <div className="stack">
       <h3 className="label">{label}</h3>

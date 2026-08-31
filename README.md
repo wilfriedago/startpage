@@ -1,7 +1,7 @@
 # Startpage
 
 A local-first startpage: a clock you can read across the room, today's agenda,
-tasks, a scratchpad, and something to listen to. Built with React, Vite, and
+tasks, a scratchpad, and something to listen to. Built with Preact, Vite, and
 pnpm from the design in `.design/Helium Startpage.dc.html`.
 
 ```sh
@@ -13,6 +13,11 @@ pnpm check
 
 Open `dist/index.html` directly in a browser after building, or point your
 browser's new-tab page at it.
+
+Component modules use kebab-case filenames, and component-specific styles live
+beside their TSX file with the same basename. `src/app.css` is reserved for the
+page shell and genuinely shared layout primitives; global resets and embedded
+fonts remain in `src/styles/`.
 
 ## The page
 
@@ -80,7 +85,7 @@ longer overrides them.
 guarantees:
 
 1. **One file.** `dist/` contains nothing but `index.html` — script, styles, and
-   all eight web fonts are inlined into it.
+   IBM Plex Sans and IBM Plex Mono are inlined into it.
 2. **Nothing loads on open.** No CDN, no Google Fonts, no remote stylesheet,
    image, or script. Open it on a plane and it renders complete.
 3. **`fetch` only.** No `XMLHttpRequest`, `WebSocket`, `EventSource`, or

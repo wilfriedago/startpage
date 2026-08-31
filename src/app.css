@@ -1,0 +1,150 @@
+/* App shell and cross-module visual primitives. */
+
+.page {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+  box-sizing: border-box;
+  min-height: 100vh;
+  padding: 34px 40px 76px;
+  overflow: hidden;
+  color: var(--fg);
+  font-family: var(--font);
+  background: var(--bg1);
+}
+
+.page__video {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.page__video-frame {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 178vh;
+  min-width: 100vw;
+  height: 100.2vh;
+  min-height: 56.25vw;
+  transform: translate(-50%, -50%);
+}
+
+.page__scrim {
+  position: absolute;
+  inset: 0;
+  background: var(--bg1);
+}
+
+.page__body {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 26px;
+}
+
+.label {
+  color: var(--faint);
+  font-size: 11px;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.meta {
+  color: var(--faint);
+  font-family: var(--mono);
+  font-size: 11px;
+}
+
+.main {
+  display: grid;
+  flex: 1;
+  grid-template-columns: minmax(0, 1fr) 348px;
+  gap: 44px;
+  align-items: start;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  min-width: 0;
+}
+
+.periphery {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.page__video-frame iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* Hints and floating controls ------------------------------------------ */
+
+.hints {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  padding: 0 2px;
+  color: var(--faint);
+  font-family: var(--mono);
+  font-size: 10.5px;
+}
+
+.field {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 8px 10px;
+  font-size: 12.5px;
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: calc(var(--radius) - 3px);
+  outline: none;
+}
+
+.field--mono {
+  font-family: var(--mono);
+  font-size: 12px;
+}
+
+.field--invalid {
+  border-color: var(--accent);
+}
+
+.field--select {
+  padding: 9px 10px;
+  font-size: 13px;
+}
+
+@media (width <= 1080px) {
+  .main {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 32px;
+  }
+
+  .periphery {
+    max-width: 520px;
+  }
+}
+
+@media (width <= 720px) {
+  .page {
+    gap: 22px;
+    padding: 24px 20px 84px;
+  }
+}

@@ -1,20 +1,27 @@
 import {
   createContext,
+  type ComponentChildren,
+  type RefObject,
+} from "preact";
+import {
   useCallback,
   useContext,
   useEffect,
   useMemo,
   useRef,
   useState,
-  type ReactNode,
-  type RefObject,
-} from "react";
+} from "preact/hooks";
 
 import { defaultShortcuts } from "virtual:dashboard";
 
 import type { Shortcut } from "./dashboard";
 import { NoiseEngine, type NoiseId } from "./lib/audio";
-import { DEFAULT_APPEARANCE, applyAppearance, applyTheme } from "./lib/appearance";
+import {
+  DEFAULT_APPEARANCE,
+  applyAppearance,
+  applyTheme,
+  normalizeAppearance,
+} from "./lib/appearance";
 import { load, save, usePersistent } from "./lib/storage";
 import { dayKey, parseEntry } from "./lib/time";
 import type {
@@ -97,7 +104,7 @@ export interface Store {
   closeDay: () => void;
   closeSettings: () => void;
   day: string | null;
-  eventRef: RefObject<HTMLInputElement | null>;
+  eventRef: RefObject<HTMLInputElement>;
   events: (AgendaEvent & { id: string })[];
   exportData: () => void;
   focus: boolean;
@@ -108,7 +115,7 @@ export interface Store {
   muteOnBlur: boolean;
   noise: NoiseId;
   note: string;
-  noteRef: RefObject<HTMLTextAreaElement | null>;
+  noteRef: RefObject<HTMLTextAreaElement>;
   openDay: (key: string) => void;
   openSettings: () => void;
   panels: Panels;
@@ -156,7 +163,7 @@ export interface Store {
   source: Source;
   station: number;
   stations: Station[];
-  taskRef: RefObject<HTMLInputElement | null>;
+  taskRef: RefObject<HTMLInputElement>;
   tasks: (Task & { id: string })[];
   theme: ThemeChoice;
   tip: Tip | null;
@@ -187,9 +194,13 @@ export function useStore(): Store {
   return store;
 }
 
-export function StoreProvider({ children }: { children: ReactNode }) {
+export function StoreProvider({ children }: { children: ComponentChildren }) {
   const [theme, setThemeState] = usePersistent<ThemeChoice>("theme", "system");
-  const [appearance, setAppearanceState] = usePersistent<Appearance>("ap", DEFAULT_APPEARANCE);
+  const [appearance, setAppearanceState] = usePersistent<Appearance>(
+    "ap",
+    DEFAULT_APPEARANCE,
+    normalizeAppearance,
+  );
   const [panels, setPanels] = usePersistent<Panels>("panels", DEFAULT_PANELS);
   const [showSeconds, setShowSeconds] = usePersistent("seconds", true);
   const [hour12, setHour12] = usePersistent("hour12", true);

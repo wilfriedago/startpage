@@ -1,0 +1,141 @@
+.player {
+  padding: 0;
+  overflow: hidden;
+}
+
+.player__tabs {
+  display: flex;
+  border-bottom: 1px solid var(--line);
+}
+
+.player__tab {
+  flex: 1;
+  padding: 11px 0;
+  color: var(--faint);
+  font-size: 11px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+}
+
+.player__tab--on {
+  color: var(--fg);
+  background: var(--hover);
+}
+
+.player__body {
+  padding: 14px 16px 6px;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.chip {
+  padding: 7px 11px;
+  color: var(--fg);
+  font-size: 12px;
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: calc(var(--radius) - 3px);
+  cursor: pointer;
+}
+
+.chip--on {
+  background: var(--hover);
+  border-color: var(--accent);
+}
+
+.stations {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 132px;
+  overflow: auto;
+}
+
+.station {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 11px;
+  color: var(--fg);
+  font-size: 12.5px;
+  text-align: left;
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: calc(var(--radius) - 3px);
+  cursor: pointer;
+}
+
+.station--on {
+  background: var(--hover);
+  border-color: var(--accent);
+}
+
+.station__dot {
+  flex: none;
+  width: 5px;
+  height: 5px;
+  background: var(--faint);
+  border-radius: 50%;
+}
+
+.station__dot--live {
+  background: var(--accent);
+}
+
+.station__label {
+  flex: 1;
+}
+
+.station__genre {
+  color: var(--faint);
+  font-family: var(--mono);
+  font-size: 10px;
+}
+
+.video {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.video__modes {
+  display: flex;
+  gap: 6px;
+}
+
+.video__modes .chip {
+  flex: 1;
+  padding: 7px 0;
+  text-align: center;
+}
+
+.video__frame {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: calc(var(--radius) - 3px);
+  aspect-ratio: 16 / 9;
+}
+
+.video__frame iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.video__frame--hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  border: 0;
+}

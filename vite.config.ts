@@ -6,7 +6,7 @@ import { icons as lucide } from "@iconify-json/lucide";
 import { icons as materialSymbols } from "@iconify-json/material-symbols";
 import { icons as simpleIcons } from "@iconify-json/simple-icons";
 import { getIconData, iconToSVG } from "@iconify/utils";
-import react from "@vitejs/plugin-react";
+import preact from "@preact/preset-vite";
 import { defineConfig, type Plugin } from "vite";
 import { viteSingleFile } from "vite-plugin-singlefile";
 import { parse } from "yaml";
@@ -83,6 +83,6 @@ export default defineConfig({
     modulePreload: { polyfill: false },
     target: "es2022",
   },
-  plugins: [dashboardDataPlugin(), react(), viteSingleFile()],
+  plugins: [dashboardDataPlugin(), preact(), viteSingleFile()],
   root: projectRoot,
 });

@@ -52,7 +52,7 @@ function fillBuffer(context: AudioContext, colour: "white" | "pink" | "brown"): 
 /**
  * The generated-noise graph. Radio and video go through video.js instead — this
  * is synthesised sample by sample, so there is no source for a player to load.
- * Kept outside React so a re-render never restarts playback.
+ * Kept outside the component tree so a re-render never restarts playback.
  */
 export class NoiseEngine {
   private context: AudioContext | null = null;

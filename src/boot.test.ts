@@ -3,7 +3,13 @@ import { fileURLToPath } from "node:url";
 
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { DEFAULT_APPEARANCE, ROOT_STYLE_KEY, applyAppearance, applyTheme } from "./lib/appearance";
+import {
+  DEFAULT_APPEARANCE,
+  ROOT_STYLE_KEY,
+  applyAppearance,
+  applyTheme,
+  normalizeAppearance,
+} from "./lib/appearance";
 import type { Appearance, ThemeChoice } from "./lib/types";
 
 const html = readFileSync(fileURLToPath(new URL("../index.html", import.meta.url)), "utf8");
@@ -105,9 +111,37 @@ const CASES: [string, ThemeChoice, Appearance][] = [
   [
     "a custom light background",
     "dark",
-    { ...DEFAULT_APPEARANCE, bg: "#F4F1EA", clockScale: 1.25, font: "DM Sans" },
+    { ...DEFAULT_APPEARANCE, bg: "#F4F1EA", clockScale: 1.25, font: "System UI" },
   ],
 ];
+
+describe("appearance migration", () => {
+  it("replaces removed bundled fonts while preserving other settings", () => {
+    expect(
+      normalizeAppearance({
+        ...DEFAULT_APPEARANCE,
+        accent: "#E8613C",
+        font: "DM Sans",
+        mono: "JetBrains Mono",
+      }),
+    ).toEqual({
+      ...DEFAULT_APPEARANCE,
+      accent: "#E8613C",
+      font: "IBM Plex Sans",
+      mono: "IBM Plex Mono",
+    });
+  });
+
+  it("keeps zero-byte system font choices", () => {
+    expect(
+      normalizeAppearance({
+        ...DEFAULT_APPEARANCE,
+        font: "System UI",
+        mono: "System Mono",
+      }),
+    ).toMatchObject({ font: "System UI", mono: "System Mono" });
+  });
+});
 
 describe("the pre-paint boot script", () => {
   it.each(CASES)("reproduces %s exactly", (_name, theme, appearance) => {

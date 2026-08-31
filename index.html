@@ -7,17 +7,6 @@
     <meta name="color-scheme" content="light dark" />
     <title>New Tab</title>
     <script>
-      /*
-       * Restores the stored look before the first paint. React applies theme and
-       * appearance from an effect, which runs *after* the browser has painted —
-       * so without this the page paints the stylesheet default (white on a light
-       * system) and only then corrects itself, which reads as a flash on every
-       * new tab.
-       *
-       * It replays what `applyAppearance` already resolved rather than
-       * recomputing anything, so it cannot drift from `src/lib/appearance.ts`.
-       * `src/boot.test.ts` holds the two together.
-       */
       (function () {
         try {
           var root = document.documentElement;
@@ -30,18 +19,7 @@
           if (style) {
             root.style.cssText = JSON.parse(style);
           }
-
-          /*
-           * The stylesheet that turns --bg1 into a painted background sits at
-           * the end of the head, behind ~1 MB of inline script. Painting the
-           * ground here, straight onto the root element, means the browser has
-           * the right colour as soon as it reaches this line instead of after
-           * the whole document is parsed. Values mirror `--bg1` in base.css,
-           * which `boot.test.ts` checks.
-           */
-          var dark =
-            theme === "dark" ||
-            (theme !== "light" && matchMedia("(prefers-color-scheme: dark)").matches);
+          var dark = theme === "dark" || (theme !== "light" && matchMedia("(prefers-color-scheme: dark)").matches);
           root.style.backgroundColor =
             root.style.getPropertyValue("--bg1") || (dark ? "#0E1123" : "#FBFCFF");
           if (!root.style.colorScheme) {

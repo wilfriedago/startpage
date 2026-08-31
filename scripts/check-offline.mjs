@@ -1,9 +1,3 @@
-/**
- * The startpage ships as a single self-contained HTML file. Nothing is fetched
- * to render it: no CDN, no web font, no stylesheet, no analytics. The only
- * network traffic the app can ever make is user-triggered, and every endpoint
- * it can reach is listed below.
- */
 import { readFile, readdir } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 
@@ -23,7 +17,6 @@ const ALLOWED_HOSTS = new Map([
  */
 const NON_REQUEST_HOSTS = new Map([
   ["www.w3.org", "the SVG namespace on every bundled icon"],
-  ["react.dev", "the docs link inside React's minified error messages"],
 ]);
 
 const output = resolve(process.argv[2] ?? "dist/index.html");

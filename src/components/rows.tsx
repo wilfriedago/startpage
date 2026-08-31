@@ -1,5 +1,6 @@
-import type { KeyboardEvent } from "react";
-import type { Ref } from "react";
+import "./rows.css";
+
+import type { Ref, TargetedKeyboardEvent } from "preact";
 
 import type { AgendaEvent, Task } from "../lib/types";
 
@@ -63,14 +64,14 @@ export function EntryInput({
   className = "inline-input",
   onSubmit,
   placeholder,
-  ref,
+  inputRef,
 }: {
   className?: string;
   onSubmit: (value: string) => void;
   placeholder: string;
-  ref?: Ref<HTMLInputElement>;
+  inputRef?: Ref<HTMLInputElement>;
 }) {
-  function handleKeyDown(event: KeyboardEvent<HTMLInputElement>): void {
+  function handleKeyDown(event: TargetedKeyboardEvent<HTMLInputElement>): void {
     if (event.key !== "Enter" || !event.currentTarget.value.trim()) {
       return;
     }
@@ -85,7 +86,7 @@ export function EntryInput({
       className={className}
       onKeyDown={handleKeyDown}
       placeholder={placeholder}
-      ref={ref}
+      ref={inputRef}
       type="text"
     />
   );
