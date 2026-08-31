@@ -117,8 +117,12 @@ video panel off — nothing loads until you press play.
 
 ## Credits
 
-The tab icon is Helium's own product logo, taken from
-[imputnet/helium](https://github.com/imputnet/helium) at
-`resources/branding/product_logo.svg` (GPL-3.0) and inlined into
-`index.html`. Its two colours, `#3450D1` and `#FBFCFF`, are the same ones the
-design uses for `--accent` and `--bg1`.
+The tab icon is Helium's own mark, the asterisk from
+[imputnet/helium](https://github.com/imputnet/helium) (GPL-3.0), taken from
+`resources/branding/product_logo.svg` and cropped to the framing their
+`resources/favicons/favicon_ntp_*.png` use for the new tab page.
+
+Those PNGs ship as `#3C4043` on transparent and count on Chromium recolouring
+favicons for internal pages, which a normal web page never gets — so the icon
+here is inline SVG that picks `#3C4043` on a light tab strip and `#FBFCFF` on a
+dark one, verified in both.
