@@ -114,3 +114,11 @@ by Google's script inside the iframe, so they never appear in our bundle and no
 static check can enumerate them. This is true of any YouTube embed, including
 the plain `<iframe>` this panel used before. If that matters to you, leave the
 video panel off — nothing loads until you press play.
+
+## Credits
+
+The tab icon is Helium's own product logo, taken from
+[imputnet/helium](https://github.com/imputnet/helium) at
+`resources/branding/product_logo.svg` (GPL-3.0) and inlined into
+`index.html`. Its two colours, `#3450D1` and `#FBFCFF`, are the same ones the
+design uses for `--accent` and `--bg1`.
