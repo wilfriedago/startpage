@@ -24,6 +24,7 @@ const bootSource = (() => {
 function fakeRoot() {
   const properties = new Map<string, string>();
   const attributes = new Map<string, string>();
+  const appended = new Set<unknown>();
   return {
     attributes,
     properties,
@@ -50,6 +51,18 @@ function fakeRoot() {
         setProperty: (name: string, value: string) => void properties.set(name, value),
       },
     },
+    document: {
+      createElement: (tag: string) => ({
+        tagName: tag.toUpperCase(),
+        textContent: "",
+      }),
+      head: {
+        appendChild: (node: { textContent?: string }) => {
+          appended.add(node);
+          return node;
+        },
+      },
+    },
   };
 }
 
@@ -66,7 +79,7 @@ beforeEach(() => {
 /** Runs the app's real code, capturing what it settles on and what it persists. */
 function applyViaApp(theme: ThemeChoice, appearance: Appearance) {
   const root = fakeRoot();
-  vi.stubGlobal("document", { documentElement: root.element });
+  vi.stubGlobal("document", { ...root.document, documentElement: root.element });
   applyTheme(theme);
   applyAppearance(appearance);
   return root;
@@ -75,7 +88,7 @@ function applyViaApp(theme: ThemeChoice, appearance: Appearance) {
 /** Runs the shipped boot script against a fresh root, reading the same storage. */
 function applyViaBoot() {
   const root = fakeRoot();
-  vi.stubGlobal("document", { documentElement: root.element });
+  vi.stubGlobal("document", { ...root.document, documentElement: root.element });
   new Function(bootSource)();
   return root;
 }

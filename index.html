@@ -21,13 +21,31 @@
       (function () {
         try {
           var root = document.documentElement;
-          var theme = localStorage.getItem("helium-start:theme");
-          if (theme && JSON.parse(theme) !== "system") {
-            root.setAttribute("data-theme", JSON.parse(theme));
+          var stored = localStorage.getItem("helium-start:theme");
+          var theme = stored ? JSON.parse(stored) : "system";
+          if (theme !== "system") {
+            root.setAttribute("data-theme", theme);
           }
           var style = localStorage.getItem("helium-start:root-style");
           if (style) {
             root.style.cssText = JSON.parse(style);
+          }
+
+          /*
+           * The stylesheet that turns --bg1 into a painted background sits at
+           * the end of the head, behind ~1 MB of inline script. Painting the
+           * ground here, straight onto the root element, means the browser has
+           * the right colour as soon as it reaches this line instead of after
+           * the whole document is parsed. Values mirror `--bg1` in base.css,
+           * which `boot.test.ts` checks.
+           */
+          var dark =
+            theme === "dark" ||
+            (theme !== "light" && matchMedia("(prefers-color-scheme: dark)").matches);
+          root.style.backgroundColor =
+            root.style.getPropertyValue("--bg1") || (dark ? "#0E1123" : "#FBFCFF");
+          if (!root.style.colorScheme) {
+            root.style.colorScheme = dark ? "dark" : "light";
           }
         } catch (error) {
           /* Private mode, or nothing stored yet: the stylesheet default stands. */

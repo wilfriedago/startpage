@@ -1,41 +1,93 @@
 import { describe, expect, it } from "vitest";
 
-import { YOUTUBE_OPTIONS, streamSource, youtubeSource } from "./lib/media";
+import { embedUrl, formatDuration, youtubeCommand, youtubeId, youtubeStatus } from "./lib/media";
+import { DEFAULT_STATIONS } from "./store";
 
-describe("youtube options", () => {
-  // videojs-youtube reads `this.options_.poster || (…derive from img.youtube.com,
-  // then checkHighResPoster())`. A truthy poster short-circuits the whole chain,
-  // which is the only thing keeping Google's thumbnail host out of the network
-  // log — and out of the offline contract's allowlist.
-  it("sets an inline poster so no thumbnail is fetched from img.youtube.com", () => {
-    expect(YOUTUBE_OPTIONS.poster).toMatch(/^data:image\//);
+describe("youtubeId", () => {
+  it("accepts every shape a person might paste", () => {
+    const id = "aqz-KE-bpKQ";
+    expect(youtubeId(`https://www.youtube.com/watch?v=${id}`)).toBe(id);
+    expect(youtubeId(`https://youtu.be/${id}`)).toBe(id);
+    expect(youtubeId(`https://www.youtube.com/embed/${id}`)).toBe(id);
+    expect(youtubeId(`https://www.youtube.com/shorts/${id}`)).toBe(id);
+    expect(youtubeId(id)).toBe(id);
   });
 
-  it("keeps the media on the privacy-enhanced host", () => {
-    expect(YOUTUBE_OPTIONS.enablePrivacyEnhancedMode).toBe(true);
+  it("rejects anything that is not an id", () => {
+    expect(youtubeId("")).toBe("");
+    expect(youtubeId("not a link")).toBe("");
+  });
+});
+
+describe("embedUrl", () => {
+  it("keeps the player on the privacy-preserving host", () => {
+    expect(embedUrl("abc123", { controls: false })).toMatch(
+      /^https:\/\/www\.youtube-nocookie\.com\/embed\/abc123\?/,
+    );
   });
 
-  it("builds a source video.js routes to the youtube tech", () => {
-    expect(youtubeSource("dQw4w9WgXcQ")).toEqual({
-      src: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-      type: "video/youtube",
+  // The page drives the embed over postMessage instead of loading Google's
+  // iframe_api, which is the only reason no youtube.com script is needed.
+  it("enables the JS API so the transport can control it", () => {
+    const url = new URL(embedUrl("abc123", { controls: false }));
+    expect(url.searchParams.get("enablejsapi")).toBe("1");
+    expect(url.searchParams.get("controls")).toBe("0");
+    expect(url.searchParams.get("playlist")).toBe("abc123");
+  });
+
+  it("can hand control back to YouTube's own bar", () => {
+    const url = new URL(embedUrl("abc123", { controls: true }));
+    expect(url.searchParams.get("controls")).toBe("1");
+  });
+});
+
+describe("youtubeCommand", () => {
+  it("builds the envelope the embed listens for", () => {
+    expect(JSON.parse(youtubeCommand("setVolume", [40]))).toEqual({
+      args: [40],
+      event: "command",
+      func: "setVolume",
     });
   });
 });
 
-describe("streamSource", () => {
-  it("types HLS and DASH so video.js reaches for http-streaming", () => {
-    expect(streamSource("https://example.org/live.m3u8").type).toBe("application/x-mpegURL");
-    expect(streamSource("https://example.org/live.mpd").type).toBe("application/dash+xml");
+describe("youtubeStatus", () => {
+  it("maps the player states the transport reacts to", () => {
+    expect(youtubeStatus(1)).toBe("playing");
+    expect(youtubeStatus(2)).toBe("paused");
+    expect(youtubeStatus(3)).toBe("loading");
+    expect(youtubeStatus(-1)).toBe("loading");
   });
 
-  it("falls back to audio/mpeg for extensionless icecast streams", () => {
-    expect(streamSource("https://ice1.somafm.com/groovesalad-128-mp3").type).toBe("audio/mpeg");
+  it("leaves the status alone for states it does not model", () => {
+    expect(youtubeStatus(5)).toBeNull();
   });
+});
 
-  it("ignores the query string when sniffing the extension", () => {
-    expect(streamSource("https://example.org/live.m3u8?token=abc").type).toBe(
-      "application/x-mpegURL",
+describe("formatDuration", () => {
+  it("formats minutes and hours, and shows live streams as unknown", () => {
+    expect(formatDuration(0)).toBe("0:00");
+    expect(formatDuration(63)).toBe("1:03");
+    expect(formatDuration(3661)).toBe("1:01:01");
+    expect(formatDuration(null)).toBe("--:--");
+    expect(formatDuration(Number.POSITIVE_INFINITY)).toBe("--:--");
+  });
+});
+
+describe("default stations", () => {
+  it("includes lo-fi and synthwave presets that feel analog.fm-like out of the box", () => {
+    expect(DEFAULT_STATIONS).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          genre: expect.stringMatching(/lo[- ]?fi|study|chill/i),
+          label: expect.stringMatching(/lo[- ]?fi|night|rain|study|cafe/i),
+        }),
+        expect.objectContaining({
+          genre: expect.stringMatching(/synthwave|retro|electro|neon/i),
+          label: "Sonic Universe",
+          url: "https://ice1.somafm.com/sonicuniverse-128-mp3",
+        }),
+      ]),
     );
   });
 });

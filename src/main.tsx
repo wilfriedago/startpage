@@ -1,8 +1,5 @@
-import "video.js/dist/video-js.css";
-
 import "./styles/base.css";
 import "./styles/app.css";
-import "./styles/videojs.css";
 
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";

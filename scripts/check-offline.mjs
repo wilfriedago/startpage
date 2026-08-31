@@ -13,8 +13,8 @@ import { parse } from "yaml";
 const ALLOWED_HOSTS = new Map([
   ["api.open-meteo.com", "weather, keyless, on a coordinate you set"],
   ["ice1.somafm.com", "default radio streams, only once you press play"],
+  ["hydra.cdnstream.com", "the default TuneIn station, only once you press play"],
   ["www.youtube-nocookie.com", "the video panel's iframe, once you press play"],
-  ["www.youtube.com", "videojs-youtube's iframe_api, loaded with the video panel"],
 ]);
 
 /**
@@ -24,21 +24,6 @@ const ALLOWED_HOSTS = new Map([
 const NON_REQUEST_HOSTS = new Map([
   ["www.w3.org", "the SVG namespace on every bundled icon"],
   ["react.dev", "the docs link inside React's minified error messages"],
-  ["example.com", "video.js's dummy base for resolving relative URLs"],
-  ["a.com", "the same, inside the HLS manifest parser"],
-  ["git.io", "a link in a thrown video.js error message"],
-  ["datatracker.ietf.org", "an RFC link in an HLS parser warning"],
-  ["tools.ietf.org", "the same"],
-  [
-    "img.youtube.com",
-    "videojs-youtube's thumbnail fallback — short-circuited by the inline poster " +
-      "in YOUTUBE_OPTIONS, which media.test.ts pins in place",
-  ],
-  [
-    "vjs.zencdn.net",
-    "video.js's remote vtt.js fallback — unreachable here, since videojs-vtt.js " +
-      "is bundled (the early return fires first) and no source carries text tracks",
-  ],
 ]);
 
 const output = resolve(process.argv[2] ?? "dist/index.html");

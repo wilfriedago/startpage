@@ -1,8 +1,9 @@
-import { MediaHost } from "./MediaHost";
+import { RadioHost } from "./RadioHost";
+import { Transport } from "./Transport";
+import { VideoHost } from "./VideoHost";
 import { NOISES } from "../lib/audio";
-import { streamSource, youtubeSource } from "../lib/media";
+import { youtubeId, type MediaState } from "../lib/media";
 import type { Source, VideoMode } from "../lib/types";
-import { youtubeId } from "../lib/youtube";
 import { useStore } from "../store";
 
 const SOURCE_TABS: [Source, string][] = [
@@ -15,6 +16,26 @@ const VIDEO_MODES: [VideoMode, string][] = [
   ["card", "In the card"],
   ["background", "As page background"],
 ];
+
+/** Turns a reported state into the design's status wording. */
+function statusLine(state: MediaState, source: Source, videoMode: VideoMode, fallback: string): string {
+  switch (state.status) {
+    case "loading":
+      return source === "radio" ? "connecting…" : "loading…";
+    case "playing":
+      return source === "radio"
+        ? "live · streaming"
+        : videoMode === "background"
+          ? "playing behind the page"
+          : "playing in the card";
+    case "paused":
+      return "paused";
+    case "error":
+      return source === "radio" ? "stream unavailable" : "video unavailable";
+    default:
+      return fallback;
+  }
+}
 
 function nowPlayingLabel(store: ReturnType<typeof useStore>): string {
   const { noise, source, station, stations, ytUrl } = store;
@@ -36,21 +57,21 @@ function nowPlayingLabel(store: ReturnType<typeof useStore>): string {
 export function Player() {
   const store = useStore();
   const {
+    mediaState,
+    muted,
     noise,
     playerStatus,
     playing,
-    reportFailure,
+    seekTo,
+    setMediaState,
     setNoise,
-    setPlayerStatus,
     setSource,
     setStation,
     setVideoMode,
-    setVolume,
     setYtUrl,
     source,
     station,
     stations,
-    togglePlay,
     videoMode,
     volume,
     ytUrl,
@@ -58,6 +79,7 @@ export function Player() {
 
   const id = youtubeId(ytUrl);
   const selected = stations[station];
+  const level = muted ? 0 : volume;
   // The card holds the player whenever video is the source, so switching modes
   // is the only thing that moves it; it stays hidden until playback starts.
   const hostsVideo = source === "video" && Boolean(id) && videoMode === "card";
@@ -139,17 +161,14 @@ export function Player() {
               ))}
             </div>
             {hostsVideo && (
-              <MediaHost
+              <VideoHost
                 className={showCard ? "video__frame" : "video__frame video__frame--hidden"}
-                controls
-                failureStatus="video unavailable"
-                kind="video"
-                onFailure={reportFailure}
-                onStatus={setPlayerStatus}
-                playingStatus="playing in the card"
+                controls={false}
+                id={id}
+                onState={setMediaState}
+                seekTo={seekTo}
                 shouldPlay={playing}
-                volume={volume}
-                {...youtubeSource(id)}
+                volume={level}
               />
             )}
           </div>
@@ -157,42 +176,22 @@ export function Player() {
       </div>
 
       {source === "radio" && selected?.url && (
-        <MediaHost
-          className="media-host--hidden"
-          failureStatus="stream unavailable"
-          kind="audio"
-          onFailure={reportFailure}
-          onStatus={setPlayerStatus}
-          playingStatus="live · streaming"
+        <RadioHost
+          onState={setMediaState}
           shouldPlay={playing}
-          volume={volume}
-          {...streamSource(selected.url)}
+          url={selected.url}
+          volume={level}
         />
       )}
 
-      <div className="transport">
-        <button
-          aria-label={playing ? "Pause" : "Play"}
-          className="transport__play"
-          onClick={togglePlay}
-          type="button"
-        >
-          {playing ? "❙❙" : "▶"}
-        </button>
-        <div className="transport__text">
-          <div className="transport__title">{nowPlayingLabel(store)}</div>
-          <div className="transport__status">{playerStatus}</div>
-        </div>
-        <input
-          aria-label="Volume"
-          className="transport__volume"
-          max={100}
-          min={0}
-          onChange={(event) => setVolume(Number(event.target.value))}
-          type="range"
-          value={volume}
-        />
-      </div>
+      <Transport
+        status={
+          source === "noise"
+            ? playerStatus
+            : statusLine(mediaState, source, videoMode, playerStatus)
+        }
+        title={nowPlayingLabel(store)}
+      />
     </section>
   );
 }

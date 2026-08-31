@@ -37,28 +37,30 @@ browser's local storage.
 
 ## The player
 
-[video.js](https://videojs.com/) drives the two sources that load something:
+Three sources, none of them a media framework:
 
-- **Radio** plays through video.js on an `<audio>` element. Because video.js
-  bundles `@videojs/http-streaming`, HLS (`.m3u8`) and DASH (`.mpd`) stations
-  work everywhere, not only in Safari. `streamSource()` types the URL by
-  extension and falls back to `audio/mpeg` for extensionless Icecast streams.
-- **Video** plays through video.js with the `videojs-youtube` tech, configured
-  with `enablePrivacyEnhancedMode`, so the media itself comes from
-  `youtube-nocookie.com`. In the card it draws its own control bar; as a page
-  background it draws none, matching the design.
-- **Noise** does not use video.js at all. It is synthesised sample by sample in
-  a Web Audio graph, so there is no source for a player to load.
+- **Noise** is synthesised sample by sample in a Web Audio graph. `cafe` is
+  shaped pink noise, `airplane` shaped brown.
+- **Radio** is a plain `<audio>` element. Streams are endless, so the transport
+  shows them as live and offers no scrub bar.
+- **Video** is a `youtube-nocookie.com` iframe driven over `postMessage` — the
+  same protocol Google's `iframe_api` speaks, used directly. Nothing from
+  youtube.com is loaded into this origin: the page only posts commands at a
+  sandboxed frame, and reads back position, duration and player state.
 
-The transport row is the single control surface: pressing play sets an
-*intention*, and `<MediaHost>` reports back what video.js actually managed to
-do — `connecting…`, `buffering…`, `live · streaming`, `stream unavailable`.
+The transport is the single control surface: play/pause, a scrub bar with
+elapsed and total time where there is something to seek, mute, and volume. The
+sliders are styled by hand rather than with `accent-color`, so the filled part
+of the track follows the value.
 
-Two things to know about `videojs-youtube`: its last release was 2023, and it
-calls `videojs.createTimeRange`, which video.js 9 removes. `MediaHost` also
-works around two of its bugs — it drops a `play()` that arrives before its
-source is parsed, and it does not always emit `playing` for a background
-player. Both are commented at the call site.
+This replaced video.js, which was **745 KiB — 56% of the whole page**. Dropping
+it did not measurably change the first paint (that is dominated by nothing we
+control), but it halved the file and removed the last third-party script.
+
+The one thing lost with it is HLS and DASH playback, which video.js provided
+through `@videojs/http-streaming`. Ordinary MP3 and AAC Icecast streams — every
+default station — play natively. A `.m3u8` station would need `hls.js` adding
+back, at roughly 150 KiB.
 
 ## Editing your shortcuts
 

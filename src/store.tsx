@@ -32,6 +32,7 @@ import type {
   VideoMode,
   WeatherState,
 } from "./lib/types";
+import { IDLE, type MediaState } from "./lib/media";
 import { fetchWeather } from "./lib/weather";
 import { youtubeId } from "./lib/youtube";
 
@@ -58,12 +59,14 @@ const DEFAULT_CITIES: City[] = [
 ];
 
 export const DEFAULT_STATIONS: Station[] = [
-  { genre: "hip-hop", label: "Fluid", url: "https://ice1.somafm.com/fluid-128-mp3" },
-  { genre: "downtempo", label: "Groove Salad", url: "https://ice1.somafm.com/groovesalad-128-mp3" },
-  { genre: "deep house", label: "Beat Blender", url: "https://ice1.somafm.com/beatblender-128-mp3" },
+  { genre: "lo-fi + night drive", label: "Lofi Night", url: "https://ice1.somafm.com/slowjazz-128-mp3" },
+  { genre: "synthwave + retro-future", label: "Sonic Universe", url: "https://ice1.somafm.com/sonicuniverse-128-mp3" },
+  { genre: "chill + beats", label: "Groove Salad", url: "https://ice1.somafm.com/groovesalad-128-mp3" },
+  { genre: "downtempo", label: "Fluid", url: "https://ice1.somafm.com/fluid-128-mp3" },
   { genre: "trip-hop", label: "Secret Agent", url: "https://ice1.somafm.com/secretagent-128-mp3" },
   { genre: "ambient", label: "Drone Zone", url: "https://ice1.somafm.com/dronezone-128-mp3" },
   { genre: "vocal chill", label: "Lush", url: "https://ice1.somafm.com/lush-128-mp3" },
+  { genre: "hip-hop", label: "TuneIn Radio", url: "https://hydra.cdnstream.com/1537_128" }
 ];
 
 function newId(): string {
@@ -112,8 +115,11 @@ export interface Store {
   playerStatus: string;
   playing: boolean;
   refreshWeather: () => void;
-  /** Called by <MediaHost> when video.js could not play the current source. */
-  reportFailure: (status: string) => void;
+  mediaState: MediaState;
+  muted: boolean;
+  /** Jump the current video to a position, in seconds. */
+  seek: (seconds: number) => void;
+  seekTo: number | null;
   removeCity: (index: number) => void;
   removeEvent: (id: string) => void;
   removeShortcut: (index: number) => void;
@@ -130,7 +136,8 @@ export interface Store {
   setNoise: (value: NoiseId) => void;
   setNote: (value: string) => void;
   setPanel: (id: PanelId, on: boolean) => void;
-  /** Called by <MediaHost> to report what video.js is actually doing. */
+  /** Reported by the media hosts as playback progresses. */
+  setMediaState: (state: MediaState) => void;
   setPlayerStatus: (status: string) => void;
   setSettingsTab: (id: string) => void;
   setShowSeconds: (value: boolean) => void;
@@ -155,6 +162,7 @@ export interface Store {
   tip: Tip | null;
   today: string;
   toggleFocus: () => void;
+  toggleMute: () => void;
   togglePlay: () => void;
   toggleTask: (id: string) => void;
   unit: Unit;
@@ -200,6 +208,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [videoMode, setVideoMode] = usePersistent<VideoMode>("videoMode", "card");
   const [muteOnBlur, setMuteOnBlur] = usePersistent("muteOnBlur", false);
   const [volume, setVolumeState] = usePersistent("volume", 55);
+  const [muted, setMuted] = usePersistent("muted", false);
   const [keys, setKeys] = usePersistent<Keys>("keys", { apple: "", google: "", todoist: "" });
 
   const [tasks, setTasks] = useState<(Task & { id: string })[]>(() =>
@@ -219,6 +228,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [weatherNonce, setWeatherNonce] = useState(0);
   const [playing, setPlaying] = useState(false);
   const [playerStatus, setPlayerStatus] = useState("idle");
+  const [mediaState, setMediaState] = useState<MediaState>(IDLE);
+  const [seekTo, setSeekTo] = useState<number | null>(null);
 
   const eventRef = useRef<HTMLInputElement>(null);
   const taskRef = useRef<HTMLInputElement>(null);
@@ -269,6 +280,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       engine.stop();
       setPlaying(false);
       setPlayerStatus(status);
+      setMediaState(IDLE);
     },
     [engine],
   );
@@ -419,7 +431,12 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       panels,
       playerStatus,
       playing,
+      mediaState,
+      muted,
       refreshWeather: () => setWeatherNonce((current) => current + 1),
+      seek: (seconds) => setSeekTo(seconds),
+      seekTo,
+      setMediaState,
       removeCity: (index) => setCities((current) => current.filter((_, i) => i !== index)),
       removeEvent: (id) => persistEvents(events.filter((event) => event.id !== id)),
       removeShortcut: (index) => setShortcuts((current) => current.filter((_, i) => i !== index)),
@@ -461,10 +478,6 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         setVolumeState(next);
       },
       setPlayerStatus,
-      reportFailure: (status: string) => {
-        setPlaying(false);
-        setPlayerStatus(status);
-      },
       setYtUrl,
       settingsOpen,
       settingsTab,
@@ -479,6 +492,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       tip,
       today,
       toggleFocus: () => setFocus((current) => !current),
+      toggleMute: () => setMuted((current) => !current),
       togglePlay,
       toggleTask: (id) =>
         persistTasks(tasks.map((task) => (task.id === id ? { ...task, done: !task.done } : task))),
@@ -522,8 +536,11 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       panels,
       persistEvents,
       persistTasks,
+      mediaState,
+      muted,
       playerStatus,
       playing,
+      seekTo,
       setAppearance,
       setAppearanceState,
       setCities,
@@ -533,6 +550,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       setLat,
       setLon,
       setMuteOnBlur,
+      setMuted,
       setNoiseState,
       setNote,
       setPanels,

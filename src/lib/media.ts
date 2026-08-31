@@ -1,121 +1,93 @@
-import videojs from "video.js";
+export const YOUTUBE_EMBED = "https://www.youtube-nocookie.com/embed/";
 
-import type Player from "video.js/dist/types/player";
-
-export type { Player };
-
-/** A source video.js can load: a stream URL, or a YouTube watch link. */
-export interface MediaSource {
-  src: string;
-  type: string;
+/** What the transport needs to know, whatever is actually making the sound. */
+export interface MediaState {
+  /** Seconds, or null for a live stream with no meaningful position. */
+  duration: number | null;
+  position: number;
+  status: "idle" | "loading" | "playing" | "paused" | "error";
 }
 
-export const YOUTUBE_WATCH = "https://www.youtube.com/watch?v=";
+export const IDLE: MediaState = { duration: null, position: 0, status: "idle" };
 
 /**
- * A transparent 1×1 pixel. videojs-youtube otherwise derives a poster from
- * img.youtube.com and probes a second thumbnail on top of it; setting one
- * up front short-circuits both, so no image is fetched from Google.
+ * Builds the embed URL. `enablejsapi` is what lets the page drive the player
+ * over postMessage, so no script from Google is ever loaded into this origin —
+ * everything YouTube runs stays inside its own sandboxed frame.
  */
-const BLANK_POSTER = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
-
-/**
- * Options handed to the YouTube tech. `poster` is load-bearing for the offline
- * contract, not cosmetic — see `media.test.ts`.
- */
-export const YOUTUBE_OPTIONS = {
-  // Keeps the media itself on youtube-nocookie.com.
-  enablePrivacyEnhancedMode: true,
-  iv_load_policy: 3,
-  modestbranding: 1,
-  poster: BLANK_POSTER,
-  rel: 0,
-  ytControls: 0,
-} as const;
-
-export function youtubeSource(id: string): MediaSource {
-  return { src: `${YOUTUBE_WATCH}${id}`, type: "video/youtube" };
+export function embedUrl(id: string, { controls }: { controls: boolean }): string {
+  const params = new URLSearchParams({
+    autoplay: "1",
+    controls: controls ? "1" : "0",
+    enablejsapi: "1",
+    iv_load_policy: "3",
+    loop: "1",
+    modestbranding: "1",
+    playlist: id,
+    playsinline: "1",
+    rel: "0",
+  });
+  // YouTube requires `origin` to accept commands, but it only exists in a page.
+  if (typeof window !== "undefined") {
+    params.set("origin", window.location.origin);
+  }
+  return `${YOUTUBE_EMBED}${id}?${params}`;
 }
 
-/**
- * Radio streams arrive with no reliable extension, so the type is inferred from
- * the URL and left blank when unknown — video.js then probes the response.
- */
-export function streamSource(url: string): MediaSource {
-  const path = url.split("?")[0] ?? "";
-  if (/\.m3u8$/i.test(path)) {
-    return { src: url, type: "application/x-mpegURL" };
-  }
-  if (/\.mpd$/i.test(path)) {
-    return { src: url, type: "application/dash+xml" };
-  }
-  if (/\.(aac|m4a)$/i.test(path)) {
-    return { src: url, type: "audio/aac" };
-  }
-  if (/\.ogg$/i.test(path)) {
-    return { src: url, type: "audio/ogg" };
+/** Accepts a watch URL, a short link, an embed link, or a bare video id. */
+export function youtubeId(raw: string): string {
+  const text = String(raw ?? "").trim();
+  if (!text) {
+    return "";
   }
 
-  return { src: url, type: "audio/mpeg" };
+  const match = text.match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([\w-]{6,})/)?.[1];
+  if (match) {
+    return match;
+  }
+
+  return /^[\w-]{6,}$/.test(text) ? text : "";
 }
 
-let youtubeTech: Promise<unknown> | null = null;
-
-/**
- * videojs-youtube calls `loadScript('https://www.youtube.com/iframe_api')` at
- * module scope, so merely importing it makes every new tab fetch Google's
- * script. Deferring the import until a video is actually queued keeps that
- * request tied to the video panel, which is the only place it belongs.
- */
-export function ensureYoutubeTech(): Promise<unknown> {
-  youtubeTech ??= import("videojs-youtube");
-  return youtubeTech;
+/** The command envelope YouTube's embed listens for on its window. */
+export function youtubeCommand(func: string, args: unknown[] = []): string {
+  return JSON.stringify({ args, event: "command", func });
 }
 
-interface CreateOptions {
-  controls: boolean;
-  kind: "audio" | "video";
-  onReady: (player: Player) => void;
-  source: MediaSource;
+export function youtubeListenRequest(): string {
+  return JSON.stringify({ event: "listening", id: 1 });
 }
 
 /**
- * Builds the element video.js needs and hands back the player. The element is
- * created imperatively rather than rendered by React: video.js replaces it with
- * its own markup, and React must not try to reconcile what it no longer owns.
+ * YouTube reports state as a number. Only the ones the transport reacts to are
+ * named; anything else leaves the current status alone.
  */
-export async function createPlayer(
-  container: HTMLElement,
-  options: CreateOptions,
-): Promise<Player> {
-  if (options.kind === "video") {
-    await ensureYoutubeTech();
+export function youtubeStatus(playerState: number): MediaState["status"] | null {
+  switch (playerState) {
+    case -1:
+    case 3:
+      return "loading";
+    case 1:
+      return "playing";
+    case 2:
+      return "paused";
+    default:
+      return null;
+  }
+}
+
+/** `183` → `3:03`. Live streams show a dash. */
+export function formatDuration(seconds: number | null): string {
+  if (seconds === null || !Number.isFinite(seconds)) {
+    return "--:--";
   }
 
-  const element = document.createElement(options.kind === "audio" ? "audio" : "video");
-  element.className = "video-js";
-  element.setAttribute("playsinline", "");
-  container.appendChild(element);
+  const total = Math.max(0, Math.floor(seconds));
+  const minutes = Math.floor(total / 60);
+  const rest = String(total % 60).padStart(2, "0");
+  if (minutes < 60) {
+    return `${minutes}:${rest}`;
+  }
 
-  return videojs(
-    element,
-    {
-      audioOnlyMode: options.kind === "audio",
-      autoplay: false,
-      bigPlayButton: false,
-      controls: options.controls,
-      fill: options.kind === "video",
-      loadingSpinner: options.kind === "video",
-      loop: true,
-      preload: "none",
-      // The source is set at construction, not after: the YouTube tech reads the
-      // video id in its constructor, and never builds a player without one.
-      sources: [options.source],
-      techOrder: options.kind === "video" ? ["youtube", "html5"] : ["html5"],
-      youtube: YOUTUBE_OPTIONS,
-    },
-    function onPlayerReady(this: Player) {
-      options.onReady(this);
-    },
-  );
+  return `${Math.floor(minutes / 60)}:${String(minutes % 60).padStart(2, "0")}:${rest}`;
 }

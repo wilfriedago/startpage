@@ -5,7 +5,7 @@ import { ClockBlock } from "./components/ClockBlock";
 import { DayModal } from "./components/DayModal";
 import { Dock } from "./components/Dock";
 import { Greeting } from "./components/Greeting";
-import { MediaHost } from "./components/MediaHost";
+import { VideoHost } from "./components/VideoHost";
 import { Note } from "./components/Note";
 import { Player } from "./components/Player";
 import { Shortcuts } from "./components/Shortcuts";
@@ -14,8 +14,7 @@ import { Tooltip } from "./components/Tooltip";
 import { WorldClocks } from "./components/WorldClocks";
 import { YearDots } from "./components/YearDots";
 import { SettingsModal } from "./components/settings/SettingsModal";
-import { youtubeSource } from "./lib/media";
-import { youtubeId } from "./lib/youtube";
+import { youtubeId } from "./lib/media";
 import { useStore } from "./store";
 
 const HINTS = ["1 agenda", "2 task", "3 note", "4 play", "f focus", ", settings"];
@@ -41,9 +40,10 @@ export function App() {
     noteRef,
     openSettings,
     panels,
+    muted,
     playing,
-    reportFailure,
-    setPlayerStatus,
+    seekTo,
+    setMediaState,
     settingsOpen,
     setTip,
     source,
@@ -124,16 +124,14 @@ export function App() {
     <div className="page">
       {backgroundVideo && (
         <div className="page__video">
-          <MediaHost
+          <VideoHost
             className="page__video-frame"
-            failureStatus="video unavailable"
-            kind="video"
-            onFailure={reportFailure}
-            onStatus={setPlayerStatus}
-            playingStatus="playing behind the page"
+            controls={false}
+            id={videoId}
+            onState={setMediaState}
+            seekTo={seekTo}
             shouldPlay={playing}
-            volume={volume}
-            {...youtubeSource(videoId)}
+            volume={muted ? 0 : volume}
           />
           <div className="page__scrim" style={{ opacity: appearance.scrim / 100 }} />
         </div>
