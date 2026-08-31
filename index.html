@@ -6,6 +6,34 @@
     <meta name="description" content="A local-first startpage: clock, agenda, tasks, and sound." />
     <meta name="color-scheme" content="light dark" />
     <title>New Tab</title>
+    <script>
+      /*
+       * Restores the stored look before the first paint. React applies theme and
+       * appearance from an effect, which runs *after* the browser has painted —
+       * so without this the page paints the stylesheet default (white on a light
+       * system) and only then corrects itself, which reads as a flash on every
+       * new tab.
+       *
+       * It replays what `applyAppearance` already resolved rather than
+       * recomputing anything, so it cannot drift from `src/lib/appearance.ts`.
+       * `src/boot.test.ts` holds the two together.
+       */
+      (function () {
+        try {
+          var root = document.documentElement;
+          var theme = localStorage.getItem("helium-start:theme");
+          if (theme && JSON.parse(theme) !== "system") {
+            root.setAttribute("data-theme", JSON.parse(theme));
+          }
+          var style = localStorage.getItem("helium-start:root-style");
+          if (style) {
+            root.style.cssText = JSON.parse(style);
+          }
+        } catch (error) {
+          /* Private mode, or nothing stored yet: the stylesheet default stands. */
+        }
+      })();
+    </script>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='28 28 200 200'%3E%3Cstyle%3Epath{fill:%233C4043}@media(prefers-color-scheme:dark){path{fill:%23FBFCFF}}%3C/style%3E%3Cpath d='M145.966 207.813L128 221L110.034 207.813L118.198 144.891L67.4689 183.379L47 174.5L49.4993 152.438L108.391 128L49.4993 103.562L47 81.5L67.4689 72.6214L118.198 111.109L110.034 48.1871L128 35L145.966 48.1871L137.802 111.109L188.531 72.6214L209 81.5L206.501 103.562L147.609 128L206.501 152.438L209 174.5L188.531 183.379L137.802 144.891L145.966 207.813Z'/%3E%3C/svg%3E" />
   </head>
   <body>

@@ -1,3 +1,4 @@
+import { save } from "./storage";
 import type { Appearance, ThemeChoice } from "./types";
 
 const DEFAULT_FONT_STACK = "'Instrument Sans',Helvetica,system-ui,sans-serif";
@@ -42,6 +43,13 @@ export const BG_SWATCHES = [
 
 export const ACCENT_SWATCHES = ["#3450D1", "#9DAEFF", "#E8613C", "#3EA981", "#C9A227", "#B95BD0"];
 
+/**
+ * Where the resolved `:root` declarations are cached for the next page load.
+ * The boot script in `index.html` replays this before the first paint, so it
+ * needs no copy of the logic below — see `boot.test.ts`.
+ */
+export const ROOT_STYLE_KEY = "root-style";
+
 /** Custom-background variables, cleared when the background falls back to the theme. */
 const DERIVED = ["--bg1", "--fg", "--dim", "--faint", "--line", "--panel", "--hover"] as const;
 
@@ -79,6 +87,7 @@ export function applyAppearance(appearance: Appearance): void {
   if (!/^#[0-9a-f]{6}$/i.test(hex)) {
     DERIVED.forEach((property) => style.removeProperty(property));
     style.removeProperty("color-scheme");
+    save(ROOT_STYLE_KEY, style.cssText);
     return;
   }
 
@@ -99,4 +108,5 @@ export function applyAppearance(appearance: Appearance): void {
   style.setProperty("--hover", `rgba(${channels},.09)`);
   // Keeps native range sliders, checkboxes and selects legible on the custom ground.
   style.setProperty("color-scheme", isDark ? "dark" : "light");
+  save(ROOT_STYLE_KEY, style.cssText);
 }
