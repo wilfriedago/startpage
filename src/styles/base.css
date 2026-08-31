@@ -1,0 +1,119 @@
+@import "./fonts.css";
+
+:root {
+  --bg1: #fbfcff;
+  --fg: #0e1123;
+  --dim: rgb(14 17 35 / 55%);
+  --faint: rgb(14 17 35 / 34%);
+  --line: rgb(14 17 35 / 11%);
+  --panel: rgb(14 17 35 / 2.5%);
+  --hover: rgb(52 80 209 / 8%);
+  --accent: #3450d1;
+  --font: "Instrument Sans", helvetica, system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, monospace;
+  --radius: 10px;
+  --clock: clamp(84px, 12vw, 168px);
+  --blur: blur(14px);
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg1: #0e1123;
+    --fg: #fbfcff;
+    --dim: rgb(251 252 255 / 60%);
+    --faint: rgb(251 252 255 / 36%);
+    --line: rgb(251 252 255 / 13%);
+    --panel: rgb(255 255 255 / 3.5%);
+    --hover: rgb(255 255 255 / 8%);
+    --accent: #9daeff;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg1: #0e1123;
+  --fg: #fbfcff;
+  --dim: rgb(251 252 255 / 60%);
+  --faint: rgb(251 252 255 / 36%);
+  --line: rgb(251 252 255 / 13%);
+  --panel: rgb(255 255 255 / 3.5%);
+  --hover: rgb(255 255 255 / 8%);
+  --accent: #9daeff;
+  color-scheme: dark;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-width: 320px;
+  background: var(--bg1);
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--fg);
+}
+
+input,
+textarea,
+button,
+select {
+  font-family: inherit;
+  color: inherit;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--faint);
+}
+
+::selection {
+  background: rgb(52 80 209 / 22%);
+}
+
+input[type="range"] {
+  accent-color: var(--accent);
+}
+
+input[type="checkbox"] {
+  accent-color: var(--accent);
+}
+
+svg {
+  display: block;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
