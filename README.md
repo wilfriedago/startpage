@@ -128,7 +128,13 @@ The build needs no base-path configuration. `dist/index.html` is a single file
 with every reference inlined as a `data:` URI, so it works unchanged at a
 project subpath, at a custom domain, or opened straight off disk.
 
-Two things to weigh before publishing: on a public repo the page and your
+### Locally instead
+
+`pnpm deploy:local` copies the built file to `/tmp/startpage.html` (pass a path
+to put it elsewhere). Point your homepage at `file:///tmp/startpage.html` once
+and the URL never changes — rebuild, run it again, and refresh.
+
+Two things to weigh before publishing to Pages: on a public repo the page and your
 `dashboard.yml` bookmarks are public, and Pages on a private repo needs a paid
 plan. Whatever you type into the page — tasks, notes, API keys — stays in your
 own browser's local storage either way, and is never sent anywhere.

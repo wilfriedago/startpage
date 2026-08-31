@@ -8,6 +8,7 @@
     "build": "vite build",
     "check": "pnpm run typecheck && pnpm run test && pnpm run build && pnpm run check:offline",
     "check:offline": "node scripts/check-offline.mjs dist/index.html",
+    "deploy:local": "node scripts/deploy-local.mjs",
     "dev": "vite",
     "preview": "vite preview",
     "test": "vitest run",
