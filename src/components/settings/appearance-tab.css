@@ -19,9 +19,13 @@
 }
 
 .swatch--on {
-  box-shadow: 0 0 0 2px var(--bg1), 0 0 0 3.5px var(--accent);
+  box-shadow:
+    0 0 0 2px var(--bg1),
+    0 0 0 3.5px var(--accent);
 }
 
 .swatch--on-fg {
-  box-shadow: 0 0 0 2px var(--bg1), 0 0 0 3.5px var(--fg);
+  box-shadow:
+    0 0 0 2px var(--bg1),
+    0 0 0 3.5px var(--fg);
 }

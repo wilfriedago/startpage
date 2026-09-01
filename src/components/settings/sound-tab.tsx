@@ -1,5 +1,5 @@
-import { useStore } from "../../store";
-import { Check, Group, RemoveButton, SliderRow } from "./controls";
+import { useStore } from '../../store'
+import { Check, Group, RemoveButton, SliderRow } from './controls'
 
 export function SoundTab() {
   const {
@@ -13,7 +13,7 @@ export function SoundTab() {
     stations,
     updateStation,
     ytUrl,
-  } = useStore();
+  } = useStore()
 
   return (
     <div className="settings__group">
@@ -42,7 +42,7 @@ export function SoundTab() {
               value={station.genre}
             />
             <RemoveButton
-              label={`Remove ${station.label || "station"}`}
+              label={`Remove ${station.label || 'station'}`}
               onClick={() => removeStation(index)}
             />
           </div>
@@ -76,5 +76,5 @@ export function SoundTab() {
         />
       </Group>
     </div>
-  );
+  )
 }

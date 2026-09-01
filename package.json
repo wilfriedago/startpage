@@ -1,18 +1,27 @@
 {
-  "name": "@dotfiles/startpage",
-  "private": true,
+  "name": "startpage",
   "version": "0.1.0",
-  "packageManager": "pnpm@11.20.0",
+  "private": true,
   "type": "module",
   "scripts": {
-    "build": "vite build",
-    "check": "pnpm run typecheck && pnpm run test && pnpm run build && pnpm run check:offline",
+    "build": "vp build",
+    "check": "vp check",
+    "check:fix": "vp check --fix",
     "check:offline": "node scripts/check-offline.mjs dist/index.html",
     "deploy:local": "node scripts/deploy-local.mjs",
-    "dev": "vite",
-    "preview": "vite preview",
-    "test": "vitest run",
-    "typecheck": "tsc --noEmit"
+    "dev": "vp dev",
+    "format": "vp fmt",
+    "format:fix": "vp fmt",
+    "lint": "vp lint",
+    "lint:fix": "vp lint --fix",
+    "prepare": "vp config",
+    "preview": "vp preview",
+    "test": "vp test run",
+    "typecheck": "tsc --noEmit",
+    "verify": "vp check && pnpm run typecheck && pnpm run test && pnpm run build && pnpm run check:offline"
+  },
+  "dependencies": {
+    "preact": "^10.29.8"
   },
   "devDependencies": {
     "@fontsource-variable/ibm-plex-sans": "5.3.0",
@@ -26,12 +35,11 @@
     "@types/babel__core": "^7.20.5",
     "@types/node": "^26.4.0",
     "typescript": "^7.0.2",
-    "vite": "^8.2.2",
+    "vite": "catalog:",
     "vite-plugin-singlefile": "^2.3.3",
-    "vitest": "^4.1.11",
+    "vite-plus": "catalog:",
+    "vitest": "catalog:",
     "yaml": "^2.9.0"
   },
-  "dependencies": {
-    "preact": "^10.29.8"
-  }
+  "packageManager": "pnpm@11.20.0"
 }

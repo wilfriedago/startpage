@@ -1,16 +1,16 @@
-import { Panel } from "./content-panel";
-import { EntryInput, EventRow } from "./rows";
-import { useStore } from "../store";
+import { Panel } from './content-panel'
+import { EntryInput, EventRow } from './rows'
+import { useStore } from '../store'
 
 export function Agenda() {
-  const { addEvent, eventRef, events, removeEvent, today } = useStore();
+  const { addEvent, eventRef, events, removeEvent, today } = useStore()
   const todays = events
     .filter((event) => event.date === today)
-    .sort((a, b) => a.at.localeCompare(b.at));
+    .sort((a, b) => a.at.localeCompare(b.at))
 
   return (
     <Panel
-      meta={todays.length ? `${todays.length} item${todays.length > 1 ? "s" : ""}` : "empty"}
+      meta={todays.length ? `${todays.length} item${todays.length > 1 ? 's' : ''}` : 'empty'}
       title="Today"
     >
       <div className="rows rows--gapped">
@@ -27,5 +27,5 @@ export function Agenda() {
         inputRef={eventRef}
       />
     </Panel>
-  );
+  )
 }

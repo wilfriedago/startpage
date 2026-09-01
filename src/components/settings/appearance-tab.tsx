@@ -1,29 +1,35 @@
-import "./appearance-tab.css";
+import './appearance-tab.css'
 
-import { ACCENT_SWATCHES, BG_SWATCHES, FONTS, MONOS } from "../../lib/appearance";
-import type { ThemeChoice } from "../../lib/types";
-import { useStore } from "../../store";
-import { Check, Group, Pill, SliderRow } from "./controls";
+import { ACCENT_SWATCHES, BG_SWATCHES, FONTS, MONOS } from '../../lib/appearance'
+import type { ThemeChoice } from '../../lib/types'
+import { useStore } from '../../store'
+import { Check, Group, Pill, SliderRow } from './controls'
 
 const THEMES: [ThemeChoice, string][] = [
-  ["system", "System"],
-  ["light", "Pearl"],
-  ["dark", "Midnight"],
-];
+  ['system', 'System'],
+  ['light', 'Pearl'],
+  ['dark', 'Midnight'],
+]
 
 function matches(current: string | null, value: string): boolean {
-  return (current ?? "").toLowerCase() === value.toLowerCase();
+  return (current ?? '').toLowerCase() === value.toLowerCase()
 }
 
 export function AppearanceTab() {
-  const { appearance, setAppearance, setTheme, theme } = useStore();
+  const { appearance, setAppearance, setTheme, theme } = useStore()
 
   return (
     <div className="settings__group">
       <Group label="Base theme">
         <div className="pills">
           {THEMES.map(([value, label]) => (
-            <Pill grow key={value} label={label} on={theme === value} onClick={() => setTheme(value)} />
+            <Pill
+              grow
+              key={value}
+              label={label}
+              on={theme === value}
+              onClick={() => setTheme(value)}
+            />
           ))}
         </div>
       </Group>
@@ -32,9 +38,7 @@ export function AppearanceTab() {
         <div className="swatches">
           {BG_SWATCHES.map((value) => (
             <button
-              className={
-                matches(appearance.bg, value) ? "swatch swatch--on" : "swatch"
-              }
+              className={matches(appearance.bg, value) ? 'swatch swatch--on' : 'swatch'}
               key={value}
               onClick={() => setAppearance({ bg: value })}
               style={{ background: value }}
@@ -48,7 +52,7 @@ export function AppearanceTab() {
             onInput={(event) => setAppearance({ bg: event.currentTarget.value })}
             placeholder="#0E1123"
             style={{ width: 104 }}
-            value={appearance.bg ?? ""}
+            value={appearance.bg ?? ''}
           />
         </div>
       </Group>
@@ -59,8 +63,8 @@ export function AppearanceTab() {
             <button
               className={
                 matches(appearance.accent, value)
-                  ? "swatch swatch--round swatch--on-fg"
-                  : "swatch swatch--round"
+                  ? 'swatch swatch--round swatch--on-fg'
+                  : 'swatch swatch--round'
               }
               key={value}
               onClick={() => setAppearance({ accent: value })}
@@ -129,5 +133,5 @@ export function AppearanceTab() {
         />
       </div>
     </div>
-  );
+  )
 }

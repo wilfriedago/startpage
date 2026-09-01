@@ -1,20 +1,33 @@
-import { icons } from "virtual:dashboard";
+import { icons as baked } from 'virtual:dashboard'
+
+import { useStore } from '../store'
 
 interface IconProps {
-  className?: string;
-  name: string;
+  className?: string
+  /** Shown when there is no icon, or its SVG has not been cached yet. */
+  fallback?: string
+  name?: string
 }
 
-/** Renders an icon baked into the bundle at build time. */
-export function Icon({ className, name }: IconProps) {
-  const svg = icons[name];
-  if (!svg) {
-    return null;
+/**
+ * Resolves an icon to SVG. Icons named in `dashboard.yml` are baked into the
+ * bundle at build time; icons picked in Settings come from the local-storage
+ * cache the picker fills, so they survive going offline.
+ */
+export function useIconSvg(name: string | undefined): string | undefined {
+  const { iconCache } = useStore()
+  if (name === undefined) {
+    return undefined
   }
 
-  return <span className={className} dangerouslySetInnerHTML={{ __html: svg }} />;
+  return baked[name] ?? iconCache[name]
 }
 
-export function hasIcon(name: string | undefined): name is string {
-  return name !== undefined && name in icons;
+export function Icon({ className, fallback, name }: IconProps) {
+  const svg = useIconSvg(name)
+  if (svg === undefined) {
+    return <>{fallback}</>
+  }
+
+  return <span className={className} dangerouslySetInnerHTML={{ __html: svg }} />
 }

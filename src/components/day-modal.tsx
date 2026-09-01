@@ -1,22 +1,22 @@
-import "./day-modal.css";
+import './day-modal.css'
 
-import { Overlay } from "./modal-overlay";
-import { EntryInput, EventRow, TaskRow } from "./rows";
-import { useStore } from "../store";
+import { Overlay } from './modal-overlay'
+import { EntryInput, EventRow, TaskRow } from './rows'
+import { useStore } from '../store'
 
 export function DayModal() {
   const { addEvent, addTask, closeDay, day, events, removeEvent, removeTask, tasks, toggleTask } =
-    useStore();
+    useStore()
 
   if (!day) {
-    return null;
+    return null
   }
 
-  const date = new Date(`${day}T12:00:00`);
+  const date = new Date(`${day}T12:00:00`)
   const dayEvents = events
     .filter((event) => event.date === day)
-    .sort((a, b) => a.at.localeCompare(b.at));
-  const dayTasks = tasks.filter((task) => task.due === day);
+    .sort((a, b) => a.at.localeCompare(b.at))
+  const dayTasks = tasks.filter((task) => task.due === day)
 
   return (
     <Overlay label="Day detail" onClose={closeDay}>
@@ -25,15 +25,15 @@ export function DayModal() {
           <div>
             <h2 className="dialog__title">
               {date.toLocaleDateString([], {
-                day: "numeric",
-                month: "long",
-                weekday: "long",
-                year: "numeric",
+                day: 'numeric',
+                month: 'long',
+                weekday: 'long',
+                year: 'numeric',
               })}
             </h2>
             <p className="dialog__meta">
-              {dayEvents.length} event{dayEvents.length === 1 ? "" : "s"} · {dayTasks.length} task
-              {dayTasks.length === 1 ? "" : "s"}
+              {dayEvents.length} event{dayEvents.length === 1 ? '' : 's'} · {dayTasks.length} task
+              {dayTasks.length === 1 ? '' : 's'}
             </p>
           </div>
           <button aria-label="Close" className="dialog__close" onClick={closeDay} type="button">
@@ -66,5 +66,5 @@ export function DayModal() {
         </div>
       </div>
     </Overlay>
-  );
+  )
 }

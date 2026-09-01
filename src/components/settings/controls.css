@@ -46,7 +46,7 @@
   gap: 14px;
 }
 
-.slider-row input[type="range"] {
+.slider-row input[type='range'] {
   flex: 1;
   min-width: 0;
 }
@@ -120,6 +120,10 @@
   grid-template-columns: 140px 1fr 30px;
 }
 
+.editor-row--shortcut {
+  grid-template-columns: 32px 140px 1fr 30px;
+}
+
 .editor-row--station {
   grid-template-columns: 132px 1fr 84px 30px;
 }
@@ -187,6 +191,14 @@
   .grid-2,
   .weather-fields {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .editor-row--shortcut {
+    grid-template-columns: 32px 1fr 30px;
+  }
+
+  .editor-row--shortcut .field--mono {
+    grid-column: 2 / -1;
   }
 
   .editor-row--station {

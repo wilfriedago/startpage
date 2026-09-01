@@ -1,16 +1,16 @@
-import "./day-tooltip.css";
+import './day-tooltip.css'
 
-import { useStore } from "../store";
+import { useStore } from '../store'
 
 export function Tooltip() {
-  const { tip } = useStore();
+  const { tip } = useStore()
   if (!tip) {
-    return null;
+    return null
   }
 
   return (
     <div className="tooltip" style={{ left: tip.x, top: tip.y }}>
       {tip.text}
     </div>
-  );
+  )
 }

@@ -16,7 +16,9 @@
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  transition: background 120ms ease, border-color 120ms ease;
+  transition:
+    background 120ms ease,
+    border-color 120ms ease;
 }
 
 .shortcut:hover {

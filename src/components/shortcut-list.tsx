@@ -1,14 +1,14 @@
-import "./shortcut-list.css";
+import './shortcut-list.css'
 
-import { Icon, hasIcon } from "./shortcut-icon";
-import { useStore } from "../store";
+import { Icon } from './shortcut-icon'
+import { useStore } from '../store'
 
 export function Shortcuts() {
-  const { shortcuts } = useStore();
-  const visible = shortcuts.filter((shortcut) => shortcut.name);
+  const { shortcuts } = useStore()
+  const visible = shortcuts.filter((shortcut) => shortcut.name)
 
   if (visible.length === 0) {
-    return null;
+    return null
   }
 
   return (
@@ -18,21 +18,17 @@ export function Shortcuts() {
         {visible.map((shortcut, index) => (
           <a
             className="shortcut"
-            href={shortcut.url || "#"}
+            href={shortcut.url || '#'}
             key={`${shortcut.url}-${index}`}
             rel="noreferrer noopener"
           >
             <span className="shortcut__badge">
-              {hasIcon(shortcut.icon) ? (
-                <Icon name={shortcut.icon} />
-              ) : (
-                shortcut.name.slice(0, 1).toUpperCase()
-              )}
+              <Icon fallback={shortcut.name.slice(0, 1).toUpperCase()} name={shortcut.icon} />
             </span>
             <span>{shortcut.name}</span>
           </a>
         ))}
       </nav>
     </div>
-  );
+  )
 }

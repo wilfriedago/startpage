@@ -1,5 +1,5 @@
-import { useStore } from "../../store";
-import { Pill } from "./controls";
+import { useStore } from '../../store'
+import { Pill } from './controls'
 
 export function WeatherTab() {
   const {
@@ -13,7 +13,7 @@ export function WeatherTab() {
     setUnit,
     unit,
     useMyLocation,
-  } = useStore();
+  } = useStore()
 
   return (
     <div className="settings__group" style={{ gap: 16 }}>
@@ -44,8 +44,8 @@ export function WeatherTab() {
       <div className="inline-row">
         <span className="inline-row__label">Units</span>
         <div className="pills">
-          <Pill label="Celsius" on={unit === "c"} onClick={() => setUnit("c")} />
-          <Pill label="Fahrenheit" on={unit === "f"} onClick={() => setUnit("f")} />
+          <Pill label="Celsius" on={unit === 'c'} onClick={() => setUnit('c')} />
+          <Pill label="Fahrenheit" on={unit === 'f'} onClick={() => setUnit('f')} />
         </div>
       </div>
 
@@ -60,5 +60,5 @@ export function WeatherTab() {
 
       <p className="footnote">Live conditions from Open-Meteo — no API key, no account.</p>
     </div>
-  );
+  )
 }

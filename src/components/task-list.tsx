@@ -1,10 +1,10 @@
-import { Panel } from "./content-panel";
-import { EntryInput, TaskRow } from "./rows";
-import { useStore } from "../store";
+import { Panel } from './content-panel'
+import { EntryInput, TaskRow } from './rows'
+import { useStore } from '../store'
 
 export function Tasks() {
-  const { addTask, removeTask, taskRef, tasks, toggleTask } = useStore();
-  const open = tasks.filter((task) => !task.done).length;
+  const { addTask, removeTask, taskRef, tasks, toggleTask } = useStore()
+  const open = tasks.filter((task) => !task.done).length
 
   return (
     <Panel meta={`${open} open`} tightHead title="Tasks">
@@ -20,5 +20,5 @@ export function Tasks() {
         inputRef={taskRef}
       />
     </Panel>
-  );
+  )
 }

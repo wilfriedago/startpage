@@ -18,6 +18,11 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # `pnpm install` runs the `prepare` script (`vp config`), which would
+    # install git hooks. Set at job level so it covers install too, not
+    # just the verify step.
+    env:
+      VP_GIT_HOOKS: '0'
     steps:
       - uses: actions/checkout@v7
 
@@ -31,9 +36,11 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      # Typecheck, tests, build, and the offline contract. A failure here stops
-      # the deploy instead of publishing a page that breaks its own promises.
-      - run: pnpm check
+      # Format, lint, typecheck, tests, build, and the offline contract. A
+      # failure here stops the deploy instead of publishing a page that breaks
+      # its own promises. vp comes from the local vite-plus devDependency, so
+      # no global install step is needed.
+      - run: pnpm verify
 
       - uses: actions/configure-pages@v6
 

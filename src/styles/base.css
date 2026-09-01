@@ -1,4 +1,4 @@
-@import "./fonts.css";
+@import './fonts.css';
 
 :root {
   --bg1: #fbfcff;
@@ -9,8 +9,8 @@
   --panel: rgb(14 17 35 / 2.5%);
   --hover: rgb(52 80 209 / 8%);
   --accent: #3450d1;
-  --font: "IBM Plex Sans", system-ui, sans-serif;
-  --mono: "IBM Plex Mono", ui-monospace, monospace;
+  --font: 'IBM Plex Sans', system-ui, sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, monospace;
   --radius: 10px;
   --clock: clamp(84px, 12vw, 168px);
   --blur: blur(14px);
@@ -18,7 +18,7 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
+  :root:not([data-theme='light']) {
     --bg1: #0e1123;
     --fg: #fbfcff;
     --dim: rgb(251 252 255 / 60%);
@@ -31,7 +31,7 @@
   }
 }
 
-:root[data-theme="dark"] {
+:root[data-theme='dark'] {
   --bg1: #0e1123;
   --fg: #fbfcff;
   --dim: rgb(251 252 255 / 60%);
@@ -82,11 +82,11 @@ textarea::placeholder {
   background: rgb(52 80 209 / 22%);
 }
 
-input[type="range"] {
+input[type='range'] {
   accent-color: var(--accent);
 }
 
-input[type="checkbox"] {
+input[type='checkbox'] {
   accent-color: var(--accent);
 }
 
