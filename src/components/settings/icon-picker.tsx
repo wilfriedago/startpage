@@ -72,6 +72,12 @@ export function IconPanel({
     const timer = setTimeout(() => {
       searchIcons(term, controller.signal)
         .then((matches) => {
+          // A request that resolved just before its cleanup ran must not
+          // replace the results of the search that replaced it.
+          if (controller.signal.aborted) {
+            return
+          }
+
           setResults(matches)
           setStatus(matches.length > 0 ? 'ready' : 'empty')
         })

@@ -8,7 +8,7 @@ const ALLOWED_HOSTS = new Map([
   ['api.open-meteo.com', 'weather, keyless, on a coordinate you set'],
   ['ice1.somafm.com', 'default radio streams, only once you press play'],
   ['hydra.cdnstream.com', 'the default TuneIn station, only once you press play'],
-  ['www.youtube-nocookie.com', "the video panel's iframe, once you press play"],
+  ['www.youtube-nocookie.com', "the video panel's iframe, once you point it at a video"],
   ['api.iconify.design', 'icon search, only while you pick a shortcut icon in Settings'],
 ])
 

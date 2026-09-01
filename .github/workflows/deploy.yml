@@ -18,6 +18,11 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # `pnpm install` runs the `prepare` script (`vp config`), which would
+    # install git hooks. Set at job level so it covers install too, not
+    # just the verify step.
+    env:
+      VP_GIT_HOOKS: '0'
     steps:
       - uses: actions/checkout@v7
 
@@ -36,9 +41,6 @@ jobs:
       # its own promises. vp comes from the local vite-plus devDependency, so
       # no global install step is needed.
       - run: pnpm verify
-        env:
-          # Don't install git hooks via the `prepare` lifecycle script in CI.
-          VP_GIT_HOOKS: '0'
 
       - uses: actions/configure-pages@v6
 

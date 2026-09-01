@@ -8,7 +8,7 @@ pnpm from the design in `.design/Helium Startpage.dc.html`.
 pnpm install
 pnpm dev
 pnpm build
-pnpm check
+pnpm verify
 ```
 
 Open `dist/index.html` directly in a browser after building, or point your
@@ -81,7 +81,7 @@ longer overrides them.
 
 ## The offline contract
 
-`pnpm check` runs `scripts/check-offline.mjs` against the build to hold four
+`pnpm verify` runs `scripts/check-offline.mjs` against the build to hold four
 guarantees:
 
 1. **One file.** `dist/` contains nothing but `index.html` — script, styles, and
@@ -91,26 +91,28 @@ guarantees:
 3. **`fetch` only.** No `XMLHttpRequest`, `WebSocket`, `EventSource`, or
    `sendBeacon` anywhere in the bundle.
 4. **A closed host list.** Every absolute URL in the bundle is either one of
-   your own bookmarks or one of three endpoints, each reached only when you ask
+   your own bookmarks or one of five endpoints, each reached only when you ask
    for it:
 
    | Host                       | Reached when                                                     |
    | -------------------------- | ---------------------------------------------------------------- |
    | `api.open-meteo.com`       | the weather panel is on — keyless, no account, just a coordinate |
    | `ice1.somafm.com`          | you press play on a default radio station                        |
-   | `www.youtube-nocookie.com` | the video panel's player and media                               |
-   | `www.youtube.com`          | `videojs-youtube`'s `iframe_api`                                 |
+   | `hydra.cdnstream.com`      | you press play on the default TuneIn station                     |
+   | `www.youtube-nocookie.com` | you point the video panel at a video — the iframe mounts then    |
+   | `api.iconify.design`       | you search for or pick a shortcut icon in Settings               |
 
 Add an endpoint and the check fails until you list it in `ALLOWED_HOSTS` with a
 reason — which is the point. Hosts that appear in the bundle only as inert text
 (an SVG namespace, an RFC link in an error message) are listed separately in
 `NON_REQUEST_HOSTS`, each with a reason you can check against the source.
 
-`videojs-youtube` calls `loadScript('https://www.youtube.com/iframe_api')` at
-module scope, so importing it normally would make **every** new tab fetch that
-script. `ensureYoutubeTech()` defers the import until a video is actually
-queued, which is verified in a browser: opening the page makes exactly one
-request, to Open-Meteo.
+The video panel drives its embed over `postMessage` rather than loading
+Google's `iframe_api`, so nothing from `youtube.com` is ever fetched. Icons work
+the same way: the ones named in `dashboard.yml` are inlined at build time, and
+an icon you pick in Settings is cached as SVG in local storage, so it renders on
+later loads without another request. Both are verified in a browser — opening
+the page makes exactly one request, to Open-Meteo.
 
 ### What the contract cannot cover
 
@@ -125,7 +127,7 @@ video panel off — nothing loads until you press play.
 ## Deploying
 
 `.github/workflows/deploy.yml` builds on every push to `main` and publishes to
-GitHub Pages. It runs `pnpm check` first, so a failing test or a broken offline
+GitHub Pages. It runs `pnpm verify` first, so a failing test or a broken offline
 contract stops the deploy rather than publishing a page that breaks its own
 promises.
 

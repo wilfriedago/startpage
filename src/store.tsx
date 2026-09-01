@@ -28,9 +28,8 @@ import type {
   VideoMode,
   WeatherState,
 } from './lib/types'
-import { IDLE, type MediaState } from './lib/media'
+import { IDLE, type MediaState, youtubeId } from './lib/media'
 import { fetchWeather } from './lib/weather'
-import { youtubeId } from './lib/youtube'
 
 const WEATHER_INTERVAL = 900_000
 const DEFAULT_PANELS: Panels = {

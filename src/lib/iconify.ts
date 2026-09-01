@@ -14,11 +14,14 @@ const SEARCH_LIMIT = 48
 const ICON_NAME = /^[a-z0-9-]+:[a-z0-9-]+$/
 
 /**
- * Icon bodies are injected as markup, so they are allow-listed rather than
- * scrubbed: every element in the body must be one of these drawing primitives,
- * which rules out `script`, `style`, `foreignObject`, `use`, and the SMIL
- * elements that can graft an event handler onto a node. A body that fails is
- * dropped, not patched.
+ * Icon bodies are injected as markup, so both elements and attributes are
+ * allow-listed rather than scrubbed. Across the ~23,600 bodies in the four
+ * bundled collections only five elements and seventeen attributes ever appear;
+ * the lists below are a deliberate superset covering gradients and masks, which
+ * multi-colour sets in the wider catalogue do use.
+ *
+ * `svg` is absent because the wrapper is built here, and no URL-bearing
+ * attribute (`href`, `xlink:href`, `style`) is admitted at all.
  */
 const ALLOWED_ELEMENTS = new Set([
   'circle',
@@ -27,8 +30,8 @@ const ALLOWED_ELEMENTS = new Set([
   'desc',
   'ellipse',
   'g',
-  'lineargradient',
   'line',
+  'lineargradient',
   'mask',
   'path',
   'pattern',
@@ -37,27 +40,110 @@ const ALLOWED_ELEMENTS = new Set([
   'radialgradient',
   'rect',
   'stop',
-  'svg',
   'symbol',
   'title',
 ])
 
-/** Attribute-level escapes the element allow-list cannot catch on its own. */
-const UNSAFE_ATTRIBUTE = /\son\w+\s*=|javascript:/i
+const ALLOWED_ATTRIBUTES = new Set([
+  'clip-path',
+  'clip-rule',
+  'cx',
+  'cy',
+  'd',
+  'fill',
+  'fill-opacity',
+  'fill-rule',
+  'gradienttransform',
+  'gradientunits',
+  'height',
+  'id',
+  'mask',
+  'offset',
+  'opacity',
+  'patterntransform',
+  'patternunits',
+  'points',
+  'r',
+  'rx',
+  'ry',
+  'stop-color',
+  'stop-opacity',
+  'stroke',
+  'stroke-dasharray',
+  'stroke-dashoffset',
+  'stroke-linecap',
+  'stroke-linejoin',
+  'stroke-miterlimit',
+  'stroke-opacity',
+  'stroke-width',
+  'transform',
+  'viewbox',
+  'width',
+  'x',
+  'x1',
+  'x2',
+  'y',
+  'y1',
+  'y2',
+])
 
-function isSafeBody(body: string): boolean {
-  if (UNSAFE_ATTRIBUTE.test(body)) {
-    return false
-  }
+/**
+ * A complete element tag. Attributes must be separated by whitespace, so a
+ * slash-delimited handler (`<path/onload=…>`, which the HTML parser reads as an
+ * attribute) fails to match here and is caught by the gap check below.
+ */
+const TAG =
+  /<\/?([a-zA-Z][\w-]*)((?:\s+[^\s/>"'=]+(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^\s"'>`=<]+))?)*)\s*\/?>/g
 
-  for (const [, element] of body.matchAll(/<\s*\/?\s*([a-zA-Z][\w:-]*)/g)) {
-    // An unreadable tag name fails closed, the same as a disallowed one.
-    if (!ALLOWED_ELEMENTS.has(element?.toLowerCase() ?? '')) {
+const ATTRIBUTE = /([^\s/>"'=]+)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'>`=<]+)))?/g
+
+/** `url(#local)` references a gradient in the same document; anything else leaves it. */
+const UNSAFE_VALUE = /javascript:|data:|url\(\s*['"]?(?!#)/i
+
+function hasSafeAttributes(attributes: string): boolean {
+  ATTRIBUTE.lastIndex = 0
+  for (let match = ATTRIBUTE.exec(attributes); match !== null; match = ATTRIBUTE.exec(attributes)) {
+    if (!ALLOWED_ATTRIBUTES.has((match[1] ?? '').toLowerCase())) {
+      return false
+    }
+    if (UNSAFE_VALUE.test(match[2] ?? match[3] ?? match[4] ?? '')) {
       return false
     }
   }
 
   return true
+}
+
+/**
+ * Every `<` in the body must open a tag this recognises. Anything the tag
+ * pattern cannot consume — a comment, a CDATA block, a malformed tag — is left
+ * in the gap between matches and rejects the whole body.
+ */
+function isSafeBody(body: string): boolean {
+  let cursor = 0
+  TAG.lastIndex = 0
+
+  for (let match = TAG.exec(body); match !== null; match = TAG.exec(body)) {
+    if (body.slice(cursor, match.index).includes('<')) {
+      return false
+    }
+    cursor = TAG.lastIndex
+
+    if (!ALLOWED_ELEMENTS.has((match[1] ?? '').toLowerCase())) {
+      return false
+    }
+    if (!hasSafeAttributes(match[2] ?? '')) {
+      return false
+    }
+  }
+
+  return !body.slice(cursor).includes('<')
+}
+
+/** The API controls these, so a size is only usable if it really is a number. */
+function dimension(value: unknown, fallback: unknown): number | undefined {
+  const size = value ?? fallback
+  return typeof size === 'number' && Number.isFinite(size) && size > 0 ? size : undefined
 }
 
 interface Collection {
@@ -111,8 +197,12 @@ async function fetchCollection(
       continue
     }
 
-    const width = icon.width ?? collection.width ?? 24
-    const height = icon.height ?? collection.height ?? 24
+    const width = dimension(icon.width, collection.width ?? 24)
+    const height = dimension(icon.height, collection.height ?? 24)
+    if (width === undefined || height === undefined) {
+      continue
+    }
+
     matches.push({ name: `${prefix}:${name}`, svg: toSvg(body, width, height) })
   }
 

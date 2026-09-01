@@ -89,17 +89,26 @@ describe('fetchIcons', () => {
     expect(await fetchIcons(['nope:thing'], signal)).toEqual([])
   })
 
-  // The body is injected as markup, so anything outside the drawing primitives
-  // is dropped rather than patched.
+  // The body is injected as markup and then cached, so a body that gets through
+  // is replayed on every load. Elements and attributes are both allow-listed,
+  // and a body that fails any check is dropped rather than patched.
   it.each([
     ['a script element', '<script>alert(1)</script><path/>'],
     ['an event handler', '<path onload="alert(1)" d="M0 0"/>'],
     ['a spaced event handler', '<path\tonclick = "alert(1)"/>'],
+    // `/` separates attributes for the HTML parser, so these are handlers too.
+    ['a slash-delimited handler', '<svg/onload=alert(1)>'],
+    ['a slash-delimited handler on a shape', '<path/onload=alert(1) d="M0 0"/>'],
+    ['a slash-delimited handler on a group', '<g/onfocus=alert(1)><path/></g>'],
     ['a javascript: url', '<a href="javascript:alert(1)"><path/></a>'],
     ['inline style markup', '<style>*{display:none}</style><path/>'],
+    ['a style attribute', '<path style="background:url(http://evil)" d="M0 0"/>'],
     ['foreignObject html', '<foreignObject><img src=x onerror=alert(1)></foreignObject>'],
     ['an external use reference', '<use href="data:image/svg+xml,x"/>'],
     ['a SMIL handler graft', '<set attributeName="onclick" to="alert(1)"/><path/>'],
+    ['an external url() reference', '<path fill="url(http://evil/#a)"/>'],
+    ['an html comment', '<!--<path/>--><path/>'],
+    ['a CDATA block', '<path d="M0 0"><![CDATA[<script>alert(1)</script>]]></path>'],
   ])('rejects %s', async (_label, body) => {
     stubApi({ lucide: collection({ evil: { body } }) })
 
@@ -115,6 +124,32 @@ describe('fetchIcons', () => {
     const [icon] = await fetchIcons(['lucide:server'], signal)
 
     expect(icon?.svg).toContain(body)
+  })
+
+  it('keeps a gradient that references itself', async () => {
+    const body =
+      '<defs><linearGradient id="a" gradientUnits="userSpaceOnUse">' +
+      '<stop offset="0" stop-color="#fff"/></linearGradient></defs><path fill="url(#a)"/>'
+    stubApi({ lucide: collection({ shiny: { body } }) })
+
+    const [icon] = await fetchIcons(['lucide:shiny'], signal)
+
+    expect(icon?.svg).toContain(body)
+  })
+
+  // Dimensions land in the viewBox, and the API controls them.
+  it.each([
+    ['a string', '24" onload="alert(1)'],
+    ['a negative number', -24],
+    ['zero', 0],
+    ['not a number', Number.NaN],
+    ['infinity', Number.POSITIVE_INFINITY],
+  ])('rejects a width that is %s', async (_label, width) => {
+    stubApi({
+      lucide: { height: 24, icons: { x: { body: '<path d="M0 0"/>', width } }, width: 24 },
+    })
+
+    expect(await fetchIcons(['lucide:x'], signal)).toEqual([])
   })
 })
 
