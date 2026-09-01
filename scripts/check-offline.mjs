@@ -9,6 +9,7 @@ const ALLOWED_HOSTS = new Map([
   ['ice1.somafm.com', 'default radio streams, only once you press play'],
   ['hydra.cdnstream.com', 'the default TuneIn station, only once you press play'],
   ['www.youtube-nocookie.com', "the video panel's iframe, once you press play"],
+  ['api.iconify.design', 'icon search, only while you pick a shortcut icon in Settings'],
 ])
 
 /**

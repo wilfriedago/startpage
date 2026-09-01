@@ -99,6 +99,8 @@ export interface Store {
   addStation: () => void
   addTask: (title: string, due?: string) => void
   appearance: Appearance
+  /** Remembers a fetched icon's SVG so it renders offline from now on. */
+  cacheIcon: (name: string, svg: string) => void
   cities: City[]
   cityName: string
   clearDone: () => void
@@ -110,6 +112,8 @@ export interface Store {
   exportData: () => void
   focus: boolean
   hour12: boolean
+  /** `prefix:name` to SVG, for icons picked in Settings. */
+  iconCache: Readonly<Record<string, string>>
   keys: Keys
   lat: string
   lon: string
@@ -207,6 +211,7 @@ export function StoreProvider({ children }: { children: ComponentChildren }) {
   const [hour12, setHour12] = usePersistent('hour12', true)
   const [note, setNote] = usePersistent('note', '')
   const [shortcuts, setShortcuts] = usePersistent<Shortcut[]>('shortcuts', defaultShortcuts)
+  const [iconCache, setIconCache] = usePersistent<Record<string, string>>('icons', {})
   const [cities, setCities] = usePersistent<City[]>('cityList', DEFAULT_CITIES)
   const [cityName, setCityName] = usePersistent('cityName', 'Cotonou')
   const [lat, setLat] = usePersistent('lat', '6.37')
@@ -398,6 +403,8 @@ export function StoreProvider({ children }: { children: ComponentChildren }) {
         persistTasks([...tasks, { done: false, due, id: newId(), title: text }])
       },
       appearance,
+      cacheIcon: (name, svg) =>
+        setIconCache((current) => (current[name] === svg ? current : { ...current, [name]: svg })),
       cities,
       cityName,
       clearDone: () => persistTasks(tasks.filter((task) => !task.done)),
@@ -427,6 +434,7 @@ export function StoreProvider({ children }: { children: ComponentChildren }) {
       },
       focus,
       hour12,
+      iconCache,
       keys,
       lat,
       lon,
@@ -540,6 +548,7 @@ export function StoreProvider({ children }: { children: ComponentChildren }) {
       events,
       focus,
       hour12,
+      iconCache,
       keys,
       lat,
       lon,
@@ -567,6 +576,7 @@ export function StoreProvider({ children }: { children: ComponentChildren }) {
       setNoiseState,
       setNote,
       setPanels,
+      setIconCache,
       setShortcuts,
       setShowSeconds,
       setSourceState,

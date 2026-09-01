@@ -1,6 +1,6 @@
 import './shortcut-list.css'
 
-import { Icon, hasIcon } from './shortcut-icon'
+import { Icon } from './shortcut-icon'
 import { useStore } from '../store'
 
 export function Shortcuts() {
@@ -23,11 +23,7 @@ export function Shortcuts() {
             rel="noreferrer noopener"
           >
             <span className="shortcut__badge">
-              {hasIcon(shortcut.icon) ? (
-                <Icon name={shortcut.icon} />
-              ) : (
-                shortcut.name.slice(0, 1).toUpperCase()
-              )}
+              <Icon fallback={shortcut.name.slice(0, 1).toUpperCase()} name={shortcut.icon} />
             </span>
             <span>{shortcut.name}</span>
           </a>
