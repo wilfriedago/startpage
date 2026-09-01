@@ -113,21 +113,13 @@
 
 .scrub::-webkit-slider-runnable-track {
   height: 3px;
-  background: linear-gradient(
-    to right,
-    var(--accent) var(--progress),
-    var(--line) var(--progress)
-  );
+  background: linear-gradient(to right, var(--accent) var(--progress), var(--line) var(--progress));
   border-radius: 999px;
 }
 
 .scrub::-moz-range-track {
   height: 3px;
-  background: linear-gradient(
-    to right,
-    var(--accent) var(--progress),
-    var(--line) var(--progress)
-  );
+  background: linear-gradient(to right, var(--accent) var(--progress), var(--line) var(--progress));
   border-radius: 999px;
 }
 

@@ -1,13 +1,13 @@
-import "./styles/base.css";
+import './styles/base.css'
 
-import { render } from "preact";
+import { render } from 'preact'
 
-import { App } from "./app";
-import { StoreProvider } from "./store";
+import { App } from './app'
+import { StoreProvider } from './store'
 
-const root = document.querySelector("#app");
+const root = document.querySelector('#app')
 if (!root) {
-  throw new Error("Startpage root element is missing");
+  throw new Error('Startpage root element is missing')
 }
 
 render(
@@ -15,4 +15,4 @@ render(
     <App />
   </StoreProvider>,
   root,
-);
+)

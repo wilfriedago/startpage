@@ -1,8 +1,8 @@
-import { useStore } from "../../store";
-import { RemoveButton } from "./controls";
+import { useStore } from '../../store'
+import { RemoveButton } from './controls'
 
 export function ShortcutsTab() {
-  const { addShortcut, removeShortcut, shortcuts, updateShortcut } = useStore();
+  const { addShortcut, removeShortcut, shortcuts, updateShortcut } = useStore()
 
   return (
     <div className="stack" style={{ gap: 10 }}>
@@ -23,7 +23,7 @@ export function ShortcutsTab() {
             value={shortcut.url}
           />
           <RemoveButton
-            label={`Remove ${shortcut.name || "shortcut"}`}
+            label={`Remove ${shortcut.name || 'shortcut'}`}
             onClick={() => removeShortcut(index)}
           />
         </div>
@@ -36,5 +36,5 @@ export function ShortcutsTab() {
         override, so shortcuts live here. The defaults come from <code>dashboard.yml</code>.
       </p>
     </div>
-  );
+  )
 }

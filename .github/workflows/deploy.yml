@@ -31,9 +31,14 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      # Typecheck, tests, build, and the offline contract. A failure here stops
-      # the deploy instead of publishing a page that breaks its own promises.
-      - run: pnpm check
+      # Format, lint, typecheck, tests, build, and the offline contract. A
+      # failure here stops the deploy instead of publishing a page that breaks
+      # its own promises. vp comes from the local vite-plus devDependency, so
+      # no global install step is needed.
+      - run: pnpm verify
+        env:
+          # Don't install git hooks via the `prepare` lifecycle script in CI.
+          VP_GIT_HOOKS: '0'
 
       - uses: actions/configure-pages@v6
 

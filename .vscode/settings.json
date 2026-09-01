@@ -1,6 +1,11 @@
 {
-  "cSpell.words": [
-    "iconify",
-    "singlefile"
-  ]
+  "cSpell.words": ["iconify", "singlefile"],
+  "editor.defaultFormatter": "oxc.oxc-vscode",
+  "oxc.disableNestedConfig": true,
+  "oxc.fmt.disableNestedConfig": true,
+  "editor.formatOnSave": true,
+  "editor.formatOnSaveMode": "file",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.oxc": "explicit"
+  }
 }

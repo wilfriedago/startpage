@@ -46,7 +46,7 @@
   gap: 14px;
 }
 
-.slider-row input[type="range"] {
+.slider-row input[type='range'] {
   flex: 1;
   min-width: 0;
 }

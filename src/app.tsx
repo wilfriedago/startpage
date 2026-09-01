@@ -1,25 +1,25 @@
-import "./app.css";
+import './app.css'
 
-import { useEffect } from "preact/hooks";
+import { useEffect } from 'preact/hooks'
 
-import { Agenda } from "./components/agenda-panel";
-import { ClockBlock } from "./components/clock-block";
-import { DayModal } from "./components/day-modal";
-import { Dock } from "./components/app-dock";
-import { Greeting } from "./components/greeting-message";
-import { VideoHost } from "./components/video-host";
-import { Note } from "./components/note-panel";
-import { Player } from "./components/media-player";
-import { Shortcuts } from "./components/shortcut-list";
-import { Tasks } from "./components/task-list";
-import { Tooltip } from "./components/day-tooltip";
-import { WorldClocks } from "./components/world-clocks";
-import { YearDots } from "./components/year-dots";
-import { SettingsModal } from "./components/settings/settings-modal";
-import { youtubeId } from "./lib/media";
-import { useStore } from "./store";
+import { Agenda } from './components/agenda-panel'
+import { ClockBlock } from './components/clock-block'
+import { DayModal } from './components/day-modal'
+import { Dock } from './components/app-dock'
+import { Greeting } from './components/greeting-message'
+import { VideoHost } from './components/video-host'
+import { Note } from './components/note-panel'
+import { Player } from './components/media-player'
+import { Shortcuts } from './components/shortcut-list'
+import { Tasks } from './components/task-list'
+import { Tooltip } from './components/day-tooltip'
+import { WorldClocks } from './components/world-clocks'
+import { YearDots } from './components/year-dots'
+import { SettingsModal } from './components/settings/settings-modal'
+import { youtubeId } from './lib/media'
+import { useStore } from './store'
 
-const HINTS = ["1 agenda", "2 task", "3 note", "4 play", "f focus", ", settings"];
+const HINTS = ['1 agenda', '2 task', '3 note', '4 play', 'f focus', ', settings']
 
 function isEditable(target: EventTarget | null): boolean {
   return (
@@ -27,11 +27,11 @@ function isEditable(target: EventTarget | null): boolean {
     target instanceof HTMLTextAreaElement ||
     target instanceof HTMLSelectElement ||
     (target instanceof HTMLElement && target.isContentEditable)
-  );
+  )
 }
 
 export function App() {
-  const store = useStore();
+  const store = useStore()
   const {
     appearance,
     closeDay,
@@ -55,58 +55,58 @@ export function App() {
     togglePlay,
     videoMode,
     ytUrl,
-  } = store;
+  } = store
 
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent): void {
       // Inside a field, Escape only means "let go of this field".
       if (isEditable(event.target)) {
-        if (event.key === "Escape") {
-          (event.target as HTMLElement).blur();
+        if (event.key === 'Escape') {
+          ;(event.target as HTMLElement).blur()
         }
-        return;
+        return
       }
 
       if (event.metaKey || event.ctrlKey || event.altKey) {
-        return;
+        return
       }
 
       switch (event.key) {
-        case "Escape":
-          closeSettings();
-          closeDay();
-          setTip(null);
-          return;
-        case ",":
-          event.preventDefault();
-          openSettings();
-          return;
-        case "f":
-          event.preventDefault();
-          toggleFocus();
-          return;
-        case "1":
-          event.preventDefault();
-          eventRef.current?.focus();
-          return;
-        case "2":
-          event.preventDefault();
-          taskRef.current?.focus();
-          return;
-        case "3":
-          event.preventDefault();
-          noteRef.current?.focus();
-          return;
-        case "4":
-          event.preventDefault();
-          togglePlay();
-          return;
+        case 'Escape':
+          closeSettings()
+          closeDay()
+          setTip(null)
+          return
+        case ',':
+          event.preventDefault()
+          openSettings()
+          return
+        case 'f':
+          event.preventDefault()
+          toggleFocus()
+          return
+        case '1':
+          event.preventDefault()
+          eventRef.current?.focus()
+          return
+        case '2':
+          event.preventDefault()
+          taskRef.current?.focus()
+          return
+        case '3':
+          event.preventDefault()
+          noteRef.current?.focus()
+          return
+        case '4':
+          event.preventDefault()
+          togglePlay()
+          return
         default:
       }
     }
 
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
   }, [
     closeDay,
     closeSettings,
@@ -117,10 +117,10 @@ export function App() {
     taskRef,
     toggleFocus,
     togglePlay,
-  ]);
+  ])
 
-  const videoId = youtubeId(ytUrl);
-  const backgroundVideo = source === "video" && Boolean(videoId) && videoMode === "background";
+  const videoId = youtubeId(ytUrl)
+  const backgroundVideo = source === 'video' && Boolean(videoId) && videoMode === 'background'
 
   return (
     <div className="page">
@@ -173,5 +173,5 @@ export function App() {
       {day && <DayModal />}
       {settingsOpen && <SettingsModal />}
     </div>
-  );
+  )
 }

@@ -1,15 +1,15 @@
-import "./rows.css";
+import './rows.css'
 
-import type { Ref, TargetedKeyboardEvent } from "preact";
+import type { Ref, TargetedKeyboardEvent } from 'preact'
 
-import type { AgendaEvent, Task } from "../lib/types";
+import type { AgendaEvent, Task } from '../lib/types'
 
 export function EventRow({
   event,
   onRemove,
 }: {
-  event: AgendaEvent & { id: string };
-  onRemove: (id: string) => void;
+  event: AgendaEvent & { id: string }
+  onRemove: (id: string) => void
 }) {
   return (
     <div className="row">
@@ -24,7 +24,7 @@ export function EventRow({
         ×
       </button>
     </div>
-  );
+  )
 }
 
 export function TaskRow({
@@ -32,21 +32,21 @@ export function TaskRow({
   onToggle,
   task,
 }: {
-  onRemove: (id: string) => void;
-  onToggle: (id: string) => void;
-  task: Task & { id: string };
+  onRemove: (id: string) => void
+  onToggle: (id: string) => void
+  task: Task & { id: string }
 }) {
   return (
     <div className="row row--task">
       <button
         aria-checked={task.done}
         aria-label={task.title}
-        className={task.done ? "row__check row__check--on" : "row__check"}
+        className={task.done ? 'row__check row__check--on' : 'row__check'}
         onClick={() => onToggle(task.id)}
         role="checkbox"
         type="button"
       />
-      <span className={task.done ? "row__title row__title--done" : "row__title"}>{task.title}</span>
+      <span className={task.done ? 'row__title row__title--done' : 'row__title'}>{task.title}</span>
       <button
         aria-label={`Remove ${task.title}`}
         className="row__remove"
@@ -56,28 +56,28 @@ export function TaskRow({
         ×
       </button>
     </div>
-  );
+  )
 }
 
 /** Uncontrolled by design: type, press Enter, and the field empties itself. */
 export function EntryInput({
-  className = "inline-input",
+  className = 'inline-input',
   onSubmit,
   placeholder,
   inputRef,
 }: {
-  className?: string;
-  onSubmit: (value: string) => void;
-  placeholder: string;
-  inputRef?: Ref<HTMLInputElement>;
+  className?: string
+  onSubmit: (value: string) => void
+  placeholder: string
+  inputRef?: Ref<HTMLInputElement>
 }) {
   function handleKeyDown(event: TargetedKeyboardEvent<HTMLInputElement>): void {
-    if (event.key !== "Enter" || !event.currentTarget.value.trim()) {
-      return;
+    if (event.key !== 'Enter' || !event.currentTarget.value.trim()) {
+      return
     }
 
-    onSubmit(event.currentTarget.value);
-    event.currentTarget.value = "";
+    onSubmit(event.currentTarget.value)
+    event.currentTarget.value = ''
   }
 
   return (
@@ -89,5 +89,5 @@ export function EntryInput({
       ref={inputRef}
       type="text"
     />
-  );
+  )
 }

@@ -21,16 +21,16 @@ fonts remain in `src/styles/`.
 
 ## The page
 
-| Block | What it does |
-| --- | --- |
-| Clock | Big tabular time, 12/24h, optional seconds, long date, live conditions |
-| World clocks | Any number of cities, by IANA time zone |
-| Shortcuts | Quick links, seeded from `dashboard.yml`, editable in Settings |
-| Year dots | One dot per day; click any day to open its events and tasks |
-| Today | Type `09:30 Standup` and press Enter — a bare title files as untimed |
-| Tasks | Check, remove, or clear the finished ones in one go |
-| Note | A scratchpad that saves as you type |
-| Sound | Locally generated noise, internet radio, or a YouTube video — see below |
+| Block        | What it does                                                            |
+| ------------ | ----------------------------------------------------------------------- |
+| Clock        | Big tabular time, 12/24h, optional seconds, long date, live conditions  |
+| World clocks | Any number of cities, by IANA time zone                                 |
+| Shortcuts    | Quick links, seeded from `dashboard.yml`, editable in Settings          |
+| Year dots    | One dot per day; click any day to open its events and tasks             |
+| Today        | Type `09:30 Standup` and press Enter — a bare title files as untimed    |
+| Tasks        | Check, remove, or clear the finished ones in one go                     |
+| Note         | A scratchpad that saves as you type                                     |
+| Sound        | Locally generated noise, internet radio, or a YouTube video — see below |
 
 Keys: `1` agenda, `2` task, `3` note, `4` play/pause, `f` focus mode,
 `,` settings, `esc` to close or to let go of a field.
@@ -94,12 +94,12 @@ guarantees:
    your own bookmarks or one of three endpoints, each reached only when you ask
    for it:
 
-   | Host | Reached when |
-   | --- | --- |
-   | `api.open-meteo.com` | the weather panel is on — keyless, no account, just a coordinate |
-   | `ice1.somafm.com` | you press play on a default radio station |
-   | `www.youtube-nocookie.com` | the video panel's player and media |
-   | `www.youtube.com` | `videojs-youtube`'s `iframe_api` |
+   | Host                       | Reached when                                                     |
+   | -------------------------- | ---------------------------------------------------------------- |
+   | `api.open-meteo.com`       | the weather panel is on — keyless, no account, just a coordinate |
+   | `ice1.somafm.com`          | you press play on a default radio station                        |
+   | `www.youtube-nocookie.com` | the video panel's player and media                               |
+   | `www.youtube.com`          | `videojs-youtube`'s `iframe_api`                                 |
 
 Add an endpoint and the check fails until you list it in `ALLOWED_HOSTS` with a
 reason — which is the point. Hosts that appear in the bundle only as inert text

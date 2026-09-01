@@ -1,12 +1,12 @@
-import { useStore } from "../../store";
+import { useStore } from '../../store'
 
 export function DataTab() {
-  const { clearDone, events, exportData, resetAppearance, shortcuts, stations, tasks } = useStore();
+  const { clearDone, events, exportData, resetAppearance, shortcuts, stations, tasks } = useStore()
 
   return (
     <div className="stack" style={{ gap: 14 }}>
       <p className="body-text">
-        {tasks.length} tasks · {events.length} events · {shortcuts.length} shortcuts ·{" "}
+        {tasks.length} tasks · {events.length} events · {shortcuts.length} shortcuts ·{' '}
         {stations.length} stations. Nothing leaves this browser.
       </p>
       <div className="settings__actions">
@@ -21,5 +21,5 @@ export function DataTab() {
         </button>
       </div>
     </div>
-  );
+  )
 }

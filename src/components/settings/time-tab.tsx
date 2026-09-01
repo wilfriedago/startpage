@@ -1,6 +1,6 @@
-import { isValidTimeZone } from "../../lib/time";
-import { useStore } from "../../store";
-import { Check, Group, Pill, RemoveButton } from "./controls";
+import { isValidTimeZone } from '../../lib/time'
+import { useStore } from '../../store'
+import { Check, Group, Pill, RemoveButton } from './controls'
 
 export function TimeTab() {
   const {
@@ -12,7 +12,7 @@ export function TimeTab() {
     setShowSeconds,
     showSeconds,
     updateCity,
-  } = useStore();
+  } = useStore()
 
   return (
     <div className="settings__group">
@@ -39,13 +39,16 @@ export function TimeTab() {
             <input
               aria-label="Time zone"
               className={
-                isValidTimeZone(city.tz) ? "field field--mono" : "field field--mono field--invalid"
+                isValidTimeZone(city.tz) ? 'field field--mono' : 'field field--mono field--invalid'
               }
               onInput={(event) => updateCity(index, { tz: event.currentTarget.value })}
               placeholder="Africa/Porto-Novo"
               value={city.tz}
             />
-            <RemoveButton label={`Remove ${city.label || "city"}`} onClick={() => removeCity(index)} />
+            <RemoveButton
+              label={`Remove ${city.label || 'city'}`}
+              onClick={() => removeCity(index)}
+            />
           </div>
         ))}
         <button className="add-button" onClick={addCity} type="button">
@@ -53,5 +56,5 @@ export function TimeTab() {
         </button>
       </Group>
     </div>
-  );
+  )
 }

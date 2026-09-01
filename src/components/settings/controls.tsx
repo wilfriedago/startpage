@@ -1,4 +1,4 @@
-import type { ComponentChildren, TargetedEvent } from "preact";
+import type { ComponentChildren, TargetedEvent } from 'preact'
 
 export function Pill({
   grow,
@@ -7,33 +7,28 @@ export function Pill({
   on,
   onClick,
 }: {
-  grow?: boolean;
-  label: string;
-  mono?: boolean;
-  on: boolean;
-  onClick: () => void;
+  grow?: boolean
+  label: string
+  mono?: boolean
+  on: boolean
+  onClick: () => void
 }) {
-  const classes = ["pill"];
+  const classes = ['pill']
   if (on) {
-    classes.push("pill--on");
+    classes.push('pill--on')
   }
   if (grow) {
-    classes.push("pill--grow");
+    classes.push('pill--grow')
   }
   if (mono) {
-    classes.push("pill--mono");
+    classes.push('pill--mono')
   }
 
   return (
-    <button
-      aria-pressed={on}
-      className={classes.join(" ")}
-      onClick={onClick}
-      type="button"
-    >
+    <button aria-pressed={on} className={classes.join(' ')} onClick={onClick} type="button">
       {label}
     </button>
-  );
+  )
 }
 
 export function Check({
@@ -42,23 +37,21 @@ export function Check({
   boxed,
   onChange,
 }: {
-  boxed?: boolean;
-  checked: boolean;
-  label: string;
-  onChange: (checked: boolean) => void;
+  boxed?: boolean
+  checked: boolean
+  label: string
+  onChange: (checked: boolean) => void
 }) {
   return (
-    <label className={boxed ? "check check--boxed" : "check"}>
+    <label className={boxed ? 'check check--boxed' : 'check'}>
       <input
         checked={checked}
-        onChange={(event: TargetedEvent<HTMLInputElement>) =>
-          onChange(event.currentTarget.checked)
-        }
+        onChange={(event: TargetedEvent<HTMLInputElement>) => onChange(event.currentTarget.checked)}
         type="checkbox"
       />
       <span>{label}</span>
     </label>
-  );
+  )
 }
 
 export function SliderRow({
@@ -70,13 +63,13 @@ export function SliderRow({
   step,
   value,
 }: {
-  display: string;
-  label: string;
-  max: number;
-  min: number;
-  onChange: (value: number) => void;
-  step: number;
-  value: number;
+  display: string
+  label: string
+  max: number
+  min: number
+  onChange: (value: number) => void
+  step: number
+  value: number
 }) {
   return (
     <div className="slider-row">
@@ -92,7 +85,7 @@ export function SliderRow({
       />
       <span className="slider-row__value">{display}</span>
     </div>
-  );
+  )
 }
 
 export function Group({ children, label }: { children: ComponentChildren; label: string }) {
@@ -101,7 +94,7 @@ export function Group({ children, label }: { children: ComponentChildren; label:
       <h3 className="label">{label}</h3>
       {children}
     </div>
-  );
+  )
 }
 
 export function RemoveButton({ label, onClick }: { label: string; onClick: () => void }) {
@@ -109,5 +102,5 @@ export function RemoveButton({ label, onClick }: { label: string; onClick: () =>
     <button aria-label={label} className="editor-row__remove" onClick={onClick} type="button">
       ×
     </button>
-  );
+  )
 }

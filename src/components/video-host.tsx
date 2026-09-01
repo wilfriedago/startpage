@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "preact/hooks";
+import { useEffect, useRef } from 'preact/hooks'
 
 import {
   IDLE,
@@ -8,17 +8,17 @@ import {
   youtubeListenRequest,
   youtubeStatus,
   type MediaState,
-} from "../lib/media";
+} from '../lib/media'
 
 interface VideoHostProps {
-  className?: string;
+  className?: string
   /** Whether YouTube draws its own control bar inside the frame. */
-  controls: boolean;
-  id: string;
-  onState: (state: MediaState) => void;
-  seekTo?: number | null;
-  shouldPlay: boolean;
-  volume: number;
+  controls: boolean
+  id: string
+  onState: (state: MediaState) => void
+  seekTo?: number | null
+  shouldPlay: boolean
+  volume: number
 }
 
 /**
@@ -36,90 +36,92 @@ export function VideoHost({
   shouldPlay,
   volume,
 }: VideoHostProps) {
-  const ref = useRef<HTMLIFrameElement>(null);
-  const report = useRef(onState);
-  report.current = onState;
-  const ready = useRef(false);
+  const ref = useRef<HTMLIFrameElement>(null)
+  const report = useRef(onState)
+  report.current = onState
+  const ready = useRef(false)
   // YouTube reports duration, position and player state in separate messages,
   // so each one updates only the fields it actually carries.
-  const latest = useRef<MediaState>(IDLE);
+  const latest = useRef<MediaState>(IDLE)
 
   const post = (message: string) => {
-    ref.current?.contentWindow?.postMessage(message, YOUTUBE_EMBED.slice(0, -7));
-  };
+    ref.current?.contentWindow?.postMessage(message, YOUTUBE_EMBED.slice(0, -7))
+  }
 
   // YouTube answers on the window; only its frame's messages are trusted.
   useEffect(() => {
     function onMessage(event: MessageEvent): void {
       if (event.source !== ref.current?.contentWindow) {
-        return;
+        return
       }
 
-      let payload: { info?: { currentTime?: number; duration?: number; playerState?: number } };
+      let payload: { info?: { currentTime?: number; duration?: number; playerState?: number } }
       try {
-        payload = typeof event.data === "string" ? JSON.parse(event.data) : event.data;
+        payload = typeof event.data === 'string' ? JSON.parse(event.data) : event.data
       } catch {
-        return;
+        return
       }
 
-      const info = payload?.info;
+      const info = payload?.info
       if (!info) {
-        return;
+        return
       }
 
-      const status = info.playerState === undefined ? null : youtubeStatus(info.playerState);
+      const status = info.playerState === undefined ? null : youtubeStatus(info.playerState)
       const next: MediaState = {
         duration:
-          info.duration !== undefined && info.duration > 0 ? info.duration : latest.current.duration,
+          info.duration !== undefined && info.duration > 0
+            ? info.duration
+            : latest.current.duration,
         position: info.currentTime ?? latest.current.position,
         status: status ?? latest.current.status,
-      };
+      }
 
       if (
         next.duration === latest.current.duration &&
         next.position === latest.current.position &&
         next.status === latest.current.status
       ) {
-        return;
+        return
       }
 
-      latest.current = next;
-      report.current(next);
+      latest.current = next
+      report.current(next)
     }
 
-    window.addEventListener("message", onMessage);
-    return () => window.removeEventListener("message", onMessage);
-  }, []);
+    window.addEventListener('message', onMessage)
+    return () => window.removeEventListener('message', onMessage)
+  }, [])
 
   // Subscribe once the frame has loaded, so it starts reporting progress.
   const subscribe = () => {
-    ready.current = true;
-    latest.current = IDLE;
-    post(youtubeListenRequest());
-    post(youtubeCommand("setVolume", [volume]));
+    ready.current = true
+    latest.current = IDLE
+    post(youtubeListenRequest())
+    post(youtubeCommand('setVolume', [volume]))
     if (!shouldPlay) {
-      post(youtubeCommand("pauseVideo"));
+      post(youtubeCommand('pauseVideo'))
     }
-  };
+  }
 
   useEffect(() => {
     if (!ready.current) {
-      return;
+      return
     }
-    post(youtubeCommand(shouldPlay ? "playVideo" : "pauseVideo"));
-  }, [shouldPlay]);
+    post(youtubeCommand(shouldPlay ? 'playVideo' : 'pauseVideo'))
+  }, [shouldPlay])
 
   useEffect(() => {
     if (ready.current) {
-      post(youtubeCommand("setVolume", [volume]));
+      post(youtubeCommand('setVolume', [volume]))
     }
-  }, [volume]);
+  }, [volume])
 
   useEffect(() => {
     if (ready.current && seekTo !== null && seekTo !== undefined) {
-      post(youtubeCommand("seekTo", [seekTo, true]));
+      post(youtubeCommand('seekTo', [seekTo, true]))
     }
-  }, [seekTo]);
+  }, [seekTo])
 
   return (
     <div className={className}>
@@ -131,5 +133,5 @@ export function VideoHost({
         title="Video"
       />
     </div>
-  );
+  )
 }

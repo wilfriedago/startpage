@@ -7,30 +7,36 @@
     <meta name="color-scheme" content="light dark" />
     <title>New Tab</title>
     <script>
-      (function () {
+      ;(function () {
         try {
-          var root = document.documentElement;
-          var stored = localStorage.getItem("helium-start:theme");
-          var theme = stored ? JSON.parse(stored) : "system";
-          if (theme !== "system") {
-            root.setAttribute("data-theme", theme);
+          var root = document.documentElement
+          var stored = localStorage.getItem('helium-start:theme')
+          var theme = stored ? JSON.parse(stored) : 'system'
+          if (theme !== 'system') {
+            root.setAttribute('data-theme', theme)
           }
-          var style = localStorage.getItem("helium-start:root-style");
+          var style = localStorage.getItem('helium-start:root-style')
           if (style) {
-            root.style.cssText = JSON.parse(style);
+            root.style.cssText = JSON.parse(style)
           }
-          var dark = theme === "dark" || (theme !== "light" && matchMedia("(prefers-color-scheme: dark)").matches);
+          var dark =
+            theme === 'dark' ||
+            (theme !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches)
           root.style.backgroundColor =
-            root.style.getPropertyValue("--bg1") || (dark ? "#0E1123" : "#FBFCFF");
+            root.style.getPropertyValue('--bg1') || (dark ? '#0E1123' : '#FBFCFF')
           if (!root.style.colorScheme) {
-            root.style.colorScheme = dark ? "dark" : "light";
+            root.style.colorScheme = dark ? 'dark' : 'light'
           }
         } catch (error) {
           /* Private mode, or nothing stored yet: the stylesheet default stands. */
         }
-      })();
+      })()
     </script>
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='28 28 200 200'%3E%3Cstyle%3Epath{fill:%233C4043}@media(prefers-color-scheme:dark){path{fill:%23FBFCFF}}%3C/style%3E%3Cpath d='M145.966 207.813L128 221L110.034 207.813L118.198 144.891L67.4689 183.379L47 174.5L49.4993 152.438L108.391 128L49.4993 103.562L47 81.5L67.4689 72.6214L118.198 111.109L110.034 48.1871L128 35L145.966 48.1871L137.802 111.109L188.531 72.6214L209 81.5L206.501 103.562L147.609 128L206.501 152.438L209 174.5L188.531 183.379L137.802 144.891L145.966 207.813Z'/%3E%3C/svg%3E" />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='28 28 200 200'%3E%3Cstyle%3Epath{fill:%233C4043}@media(prefers-color-scheme:dark){path{fill:%23FBFCFF}}%3C/style%3E%3Cpath d='M145.966 207.813L128 221L110.034 207.813L118.198 144.891L67.4689 183.379L47 174.5L49.4993 152.438L108.391 128L49.4993 103.562L47 81.5L67.4689 72.6214L118.198 111.109L110.034 48.1871L128 35L145.966 48.1871L137.802 111.109L188.531 72.6214L209 81.5L206.501 103.562L147.609 128L206.501 152.438L209 174.5L188.531 183.379L137.802 144.891L145.966 207.813Z'/%3E%3C/svg%3E"
+    />
   </head>
   <body>
     <div id="app"></div>

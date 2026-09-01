@@ -1,14 +1,14 @@
-import type { Keys } from "../../lib/types";
-import { useStore } from "../../store";
+import type { Keys } from '../../lib/types'
+import { useStore } from '../../store'
 
 const INTEGRATIONS: [keyof Keys, string, string][] = [
-  ["google", "Google Calendar", "OAuth client ID"],
-  ["apple", "Apple Calendar", "CalDAV app password"],
-  ["todoist", "Todoist", "API token"],
-];
+  ['google', 'Google Calendar', 'OAuth client ID'],
+  ['apple', 'Apple Calendar', 'CalDAV app password'],
+  ['todoist', 'Todoist', 'API token'],
+]
 
 export function IntegrationsTab() {
-  const { keys, setKey } = useStore();
+  const { keys, setKey } = useStore()
 
   return (
     <div className="stack" style={{ gap: 12 }}>
@@ -30,5 +30,5 @@ export function IntegrationsTab() {
         which service to wire first.
       </p>
     </div>
-  );
+  )
 }

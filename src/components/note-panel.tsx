@@ -1,10 +1,10 @@
-import "./content-panel.css";
-import "./note-panel.css";
+import './content-panel.css'
+import './note-panel.css'
 
-import { useStore } from "../store";
+import { useStore } from '../store'
 
 export function Note() {
-  const { note, noteRef, setNote } = useStore();
+  const { note, noteRef, setNote } = useStore()
 
   return (
     <section className="panel note">
@@ -18,5 +18,5 @@ export function Note() {
         value={note}
       />
     </section>
-  );
+  )
 }
