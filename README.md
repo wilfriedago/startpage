@@ -37,8 +37,10 @@ Keys: `1` agenda, `2` task, `3` note, `4` play/pause, `f` focus mode,
 
 Everything is configurable under Settings (`,`): theme, background, accent,
 fonts, corner radius, clock size, which blocks appear at all, and an export of
-the whole lot as JSON. Nothing is ever sent anywhere — it all lives in this
-browser's local storage.
+the whole lot as JSON. It all lives in this browser's local storage. The one
+thing that leaves the browser is icon search: what you type into the icon
+picker goes to `api.iconify.design` so it can answer, and a picked icon is
+cached locally so it is never fetched twice. Nothing else is sent anywhere.
 
 ## The player
 

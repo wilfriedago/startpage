@@ -107,6 +107,10 @@ describe('fetchIcons', () => {
     ['an external use reference', '<use href="data:image/svg+xml,x"/>'],
     ['a SMIL handler graft', '<set attributeName="onclick" to="alert(1)"/><path/>'],
     ['an external url() reference', '<path fill="url(http://evil/#a)"/>'],
+    // A CSS escape can spell `url(` without writing it.
+    ['a css-escaped url()', String.raw`<path fill="u\72l(https://evil/p)"/>`],
+    ['a css-escaped leading char', String.raw`<path fill="\75 rl(https://evil/p)"/>`],
+    ['any backslash at all', String.raw`<path d="M0 0" fill="\6a avascript:alert(1)"/>`],
     ['an html comment', '<!--<path/>--><path/>'],
     ['a CDATA block', '<path d="M0 0"><![CDATA[<script>alert(1)</script>]]></path>'],
   ])('rejects %s', async (_label, body) => {

@@ -97,8 +97,14 @@ const TAG =
 
 const ATTRIBUTE = /([^\s/>"'=]+)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'>`=<]+)))?/g
 
-/** `url(#local)` references a gradient in the same document; anything else leaves it. */
-const UNSAFE_VALUE = /javascript:|data:|url\(\s*['"]?(?!#)/i
+/**
+ * `url(#local)` references a gradient in the same document; anything else
+ * leaves it. Backslashes are rejected outright because a CSS escape can spell
+ * `url(` without writing it — `u\72l(https://…)` — and browsers disagree about
+ * whether they decode escapes in presentation attributes. No body in the
+ * bundled collections contains one, so there is nothing to lose by refusing.
+ */
+const UNSAFE_VALUE = /\\|javascript:|data:|url\(\s*['"]?(?!#)/i
 
 function hasSafeAttributes(attributes: string): boolean {
   ATTRIBUTE.lastIndex = 0

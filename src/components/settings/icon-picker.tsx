@@ -83,7 +83,9 @@ export function IconPanel({
         })
         .catch(() => {
           if (!controller.signal.aborted) {
-            setResults([])
+            // Fall back to the bundled icons rather than an empty grid: being
+            // offline is exactly when they are the only ones that can work.
+            setResults(BUNDLED)
             setStatus('unreachable')
           }
         })
